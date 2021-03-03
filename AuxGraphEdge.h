@@ -4,10 +4,46 @@
 #include <iostream>
 
 class AuxGraphEdge {
+private:
+    int m_sourceId;
+    int m_destinationId;
+    float m_weight;
+
 public:
-    int sourceId;
-    int destinationId;
-    int weight;
+    AuxGraphEdge() {}
+
+    AuxGraphEdge(int sourceId, int destinationId, float weight) {
+        m_sourceId = sourceId;
+        m_destinationId = destinationId;
+        m_weight = weight;
+    }
+
+    // Getters
+    int getSourceId() {
+        return m_sourceId;
+    }
+
+    int getDestinationId() {
+        return m_destinationId;
+    }
+
+    int getWeight() {
+        return m_weight;
+    }
+
+    // Setters
+    void setSourceId(int sourceId) {
+        m_sourceId = sourceId;
+    }
+
+    void setDestinationId(int destinationId) {
+        m_destinationId = destinationId;
+    }
+
+    void setWeight(float weight) {
+        m_weight = weight;
+    }
+
 };
 
 #endif // AUXGRAPHEDGE_H_INCLUDED

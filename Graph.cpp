@@ -123,6 +123,10 @@ void Graph::insertEdge(int id, int targetId, float weight) {
 
             node->insertEdge(targetNode, weight, m_isDirected);
 
+            // Insert new edge in list
+            AuxGraphEdge newEdge(id, targetId, weight);
+            edges.push_back(newEdge);
+
             edgesCount++;
         }
     } else { // insert edge between id and targetId and reverse
@@ -133,10 +137,18 @@ void Graph::insertEdge(int id, int targetId, float weight) {
             // insert edge between id and targetId
             node->insertEdge(targetNode, weight, m_isDirected);
 
+            // Insert new edge in list
+            AuxGraphEdge newEdge(id, targetId, weight);
+            edges.push_back(newEdge);
+
             edgesCount++;
         }
         if (!hasEdgeBetween(targetId, id)) {
             targetNode->insertEdge(node, weight, m_isDirected);
+
+            // Insert new edge in list
+            AuxGraphEdge newEdge(targetId, id, weight);
+            edges.push_back(newEdge);
 
             edgesCount++;
         }
@@ -372,9 +384,9 @@ void Graph::prim(std::ofstream &saida) {
             //só adiciona arestas caso o no de destino ainda nao foi explorado
             if (!isNodeVisited(visitedNodes, a->getTargetId(), m_order)) {
                 i++;
-                edgesList[i].sourceId = a->getId();
-                edgesList[i].destinationId = a->getTargetId();
-                edgesList[i].weight = a->getWeight();
+                edgesList[i].setSourceId(a->getId());
+                edgesList[i].setDestinationId(a->getTargetId());
+                edgesList[i].setWeight(a->getWeight());
             }
         }
 
@@ -382,7 +394,7 @@ void Graph::prim(std::ofstream &saida) {
         AuxGraphEdge aux;
         for (int j = 0; j < i; j++) {
             for (int k = j + 1; k < i; k++) {
-                if (edgesList[j].weight > edgesList[k].weight) {
+                if (edgesList[j].getWeight() > edgesList[k].getWeight()) {
                     aux = edgesList[j];
                     edgesList[j] = edgesList[k];
                     edgesList[k] = aux;
@@ -397,7 +409,7 @@ void Graph::prim(std::ofstream &saida) {
 
         solution[edgesCountSolution] = edgesList[0];
         edgesCountSolution++;
-        node = getNode(edgesList[0].destinationId);
+        node = getNode(edgesList[0].getDestinationId());
     }
 
     std::string graphType;
@@ -414,9 +426,9 @@ void Graph::prim(std::ofstream &saida) {
     const std::string quote = "\"";
 
     for (int l = 0; l < edgesCountSolution; l++) {
-        std::cout << "[" << solution[l].sourceId << " -> " << solution[l].destinationId << "] - " << solution[l].weight << "\n";
-        saida << "\t" << solution[l].sourceId << " " << nodesSeparator << " " << solution[l].destinationId << " [label" << quote << solution[l].weight << quote << "]\n";
-        sumWeights += solution[l].weight;
+        std::cout << "[" << solution[l].getSourceId() << " -> " << solution[l].getDestinationId() << "] - " << solution[l].getWeight() << "\n";
+        saida << "\t" << solution[l].getSourceId() << " " << nodesSeparator << " " << solution[l].getDestinationId() << " [label" << quote << solution[l].getWeight() << quote << "]\n";
+        sumWeights += solution[l].getWeight();
     }
     // cout << "Somatorio dos Pesos: " << somatorioPesos << endl;
 

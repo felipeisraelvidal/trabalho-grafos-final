@@ -3,9 +3,10 @@
 
 #include <iostream>
 #include <fstream>
-#include <stack>
+#include <list>
 #include "GraphNode.h"
 #include "Hash.h"
+#include "AuxGraphEdge.h"
 
 class Graph {
 private:
@@ -20,6 +21,8 @@ private:
 
     int edgesCount;
     int nodesCount;
+
+    std::list<AuxGraphEdge> edges;
 
     // Prim
     bool isNodeVisited(int *visitedNodes, int id, int tam);
