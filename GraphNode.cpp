@@ -88,6 +88,10 @@ void GraphNode::removeAllEdges() {
     }
 }
 
+void GraphNode::setGroupId(int groupId) {
+    m_groupId = groupId;
+}
+
 // Miscellaneous
 void GraphNode::incrementInDegree() {
     m_inDegree++;

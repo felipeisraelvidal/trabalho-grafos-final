@@ -2,8 +2,7 @@
 #include <fstream>
 #include <string>
 #include <queue>
-#include <stack>
-#include <list>
+#include <vector>
 #include "Graph.h"
 #include "AuxGraphEdge.h"
 #include "Hash.h"
@@ -91,10 +90,14 @@ GraphEdge* Graph::getEdgeBetween(int id, int targetId) {
 }
 
 // Insertion and removal
-void Graph::insertNode(int id, float weight) {
+void Graph::insertNode(int id, float weight, int groupId) {
     if (!searchNode(id)) {
         GraphNode *newNode = new GraphNode(id);
         newNode->setWeight(weight);
+
+        if (groupId != -1) {
+            newNode->setGroupId(groupId);
+        }
 
         if (lastNode != nullptr) { // nodes list is not empty
             lastNode->setNextNode(newNode);
@@ -110,10 +113,10 @@ void Graph::insertNode(int id, float weight) {
 
 void Graph::insertEdge(int id, int targetId, float weight) {
     if (!searchNode(id)) {
-        insertNode(id, 0);
+        insertNode(id, 0, -1);
     }
     if (!searchNode(targetId)) {
-        insertNode(targetId, 0);
+        insertNode(targetId, 0, -1);
     }
 
     if (m_isDirected) { // insert edge between id and targetId only
@@ -125,7 +128,8 @@ void Graph::insertEdge(int id, int targetId, float weight) {
 
             // Insert new edge in list
             AuxGraphEdge newEdge(id, targetId, weight);
-            edges.push_back(newEdge);
+            m_edges.push_back(newEdge);
+            // std::cout << "Inserted: " << newEdge.getSourceId() << " - " << newEdge.getDestinationId() << "(" << newEdge.getWeight() << ")\n";
 
             edgesCount++;
         }
@@ -139,7 +143,8 @@ void Graph::insertEdge(int id, int targetId, float weight) {
 
             // Insert new edge in list
             AuxGraphEdge newEdge(id, targetId, weight);
-            edges.push_back(newEdge);
+            this->m_edges.insert(m_edges.begin() + (m_edges.size() - 1), newEdge);
+            std::cout << "Inserted: " << newEdge.getSourceId() << " - " << newEdge.getDestinationId() << "(" << newEdge.getWeight() << ")\n";
 
             edgesCount++;
         }
@@ -148,7 +153,8 @@ void Graph::insertEdge(int id, int targetId, float weight) {
 
             // Insert new edge in list
             AuxGraphEdge newEdge(targetId, id, weight);
-            edges.push_back(newEdge);
+            this->m_edges.insert(m_edges.begin() + (m_edges.size() - 1), newEdge);
+            std::cout << "Inserted: " << newEdge.getSourceId() << " - " << newEdge.getDestinationId() << "(" << newEdge.getWeight() << ")\n";
 
             edgesCount++;
         }
@@ -258,7 +264,7 @@ Graph* Graph::inducedSubgraph(int *vet, int tam, std::ofstream &output) {
         }
 
         if (subgraph->searchNode(vet[i]) == false) {
-            subgraph->insertNode(vet[i], 0);
+            subgraph->insertNode(vet[i], 0, -1);
         }
 
         int ind = getIndexFromArray<int>(nodes, m_order, vet[i]);
@@ -481,5 +487,14 @@ int* Graph::topologicalSort(std::ofstream &output) {
     }
     std::cout << "\n";
 
-    return NULL;
+    return result;
+}
+
+// Greedy
+void Graph::greedy() {
+
+}
+
+void Graph::randomizedGreedy() {
+    
 }

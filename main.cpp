@@ -1,10 +1,13 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <regex>
 #include <string>
+#include <vector>
 #include "Graph.h"
 #include "Hash.h"
 
-void leitura(Graph *graph, std::ifstream &input_file) {
+void startReadingTxt(Graph *graph, std::ifstream &input_file) {
     int order;
     int idNodeSource;
     int idNodeTarget;
@@ -37,6 +40,46 @@ void leitura(Graph *graph, std::ifstream &input_file) {
             graph->getNode(idNodeSource)->setWeight(nodeSourceWeight);
             graph->getNode(idNodeTarget)->setWeight(nodeTargetWeight);
         }
+    }
+}
+
+void startReadingOtherFileExtension(Graph *graph, std::string &input_file_name, std::ifstream &input_file) {
+    int numberOfGroups;
+    int numberOfNodes;
+
+    std::cout << "Enter the number of groups: ";
+    std::cin >> numberOfGroups;
+
+    std::cout << "Enter the number of nodes: ";
+    std::cin >> numberOfNodes;
+
+    int groupId;
+    for (int i = 0; i < numberOfNodes; i++) {
+        input_file >> groupId;
+        std::cout << "Node: " << i << " - group: " << groupId << "\n";
+        graph->insertNode(i, 0, groupId);
+    }
+
+    int nodeId;
+    int targetId;
+    float edgeWeight;
+
+    while (input_file >> nodeId >> targetId >> edgeWeight) {
+        graph->insertEdge(nodeId, targetId, edgeWeight);
+    }
+}
+
+void leitura(Graph *graph, std::string &input_file_name, std::ifstream &input_file) {
+
+    // Get file extension
+    std::string fileExtension = input_file_name.substr(input_file_name.find_first_of(".") + 1);
+    std::cout << input_file_name << "\n";
+    std::cout << fileExtension << "\n";
+
+    if (fileExtension == "txt") {
+        startReadingTxt(graph, input_file);
+    } else {
+        startReadingOtherFileExtension(graph, input_file_name, input_file);
     }
 }
 
@@ -113,6 +156,7 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
     }
     case 9: {
         std::cout << "Algoritmo Guloso Randomizado\n";
+        graph->greedy();
         break;
     }
     case 10: {
@@ -197,7 +241,8 @@ int main(int argc, char const *argv[]) {
     Graph graph(isDirected, isWeightedEdge, isWeightedNode);
 
     if (input_file.is_open()) {
-        leitura(&graph, input_file);
+        leitura(&graph, input_file_name, input_file);
+        
         graph.print();
         std::cout << "Order: " << graph.getOrder() << "\n";
 

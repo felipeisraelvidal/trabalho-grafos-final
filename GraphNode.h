@@ -8,6 +8,8 @@ class GraphNode {
 private:
     int m_id;
     float m_weight;
+
+    int m_groupId;
     
     unsigned int m_inDegree;
     unsigned int m_outDegree;
@@ -35,6 +37,7 @@ public:
     // Setters
     void setWeight(float weight);
     void setNextNode(GraphNode *node);
+    void setGroupId(int groupId);
 
     // Edges
     void insertEdge(GraphNode *targetNode, float weight, bool isDirected);

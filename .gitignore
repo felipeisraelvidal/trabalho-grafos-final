@@ -1,3 +1,6 @@
 /.vscode
+/instances
+
+.DS_STORE
 
 execGrupo1

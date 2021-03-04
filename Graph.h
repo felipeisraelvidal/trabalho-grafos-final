@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <list>
+#include <vector>
 #include "GraphNode.h"
 #include "Hash.h"
 #include "AuxGraphEdge.h"
@@ -20,9 +20,8 @@ private:
     GraphNode *lastNode;
 
     int edgesCount;
-    int nodesCount;
 
-    std::list<AuxGraphEdge> edges;
+    std::vector<AuxGraphEdge> m_edges;
 
     // Prim
     bool isNodeVisited(int *visitedNodes, int id, int tam);
@@ -63,7 +62,7 @@ public:
     GraphEdge* getEdgeBetween(int id, int targetId); // returns a pointer to the edge between id and targetId
 
     // Insertion and removal
-    void insertNode(int id, float weight);
+    void insertNode(int id, float weight, int groupId);
     void insertEdge(int id, int targetId, float weight);
     void removeNode(int id);
 
@@ -83,6 +82,10 @@ public:
 
     // Topological sort
     int* topologicalSort(std::ofstream &output);
+
+    // Greedy
+    void greedy();
+    void randomizedGreedy();
 
 };
 
