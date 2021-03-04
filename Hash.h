@@ -4,30 +4,118 @@
 #include <iostream>
 #include "HashNode.h"
 
+template <class T>
 class Hash {
 private:
     int m_order;
-    HashNode **table;
+    HashNode<T> **table;
 
     // Miscellaneous
-    int hashCode(int key);
+    int hashCode(int key) {
+        return key % m_order;
+    }
 
 public:
-    Hash(int order);
-    ~Hash();
+    Hash(int order) {
+        if (order >= 0) {
+            m_order = order;
+            table = (HashNode<T> **)malloc(sizeof(HashNode<T>) * m_order);
+            for (int i = 0; i < m_order; i++) {
+                table[i] = NULL;
+            }
+        }
+    }
+
+    ~Hash() {
+        delete table;
+    }
 
     // Insertion and removal
-    void insert(int key, int value);
+    void insert(int key, T value) {
+        HashNode<T> *temp = new HashNode<T>(key, value);
+
+        int hashIndex = hashCode(key);
+
+        while (table[hashIndex] != NULL && table[hashIndex]->getKey() != key && table[hashIndex]->getKey() != -1) {
+            hashIndex++;
+            hashIndex %= m_order;
+        }
+
+        table[hashIndex] = temp;
+    }
 
     // Getters
-    int get(int key);
-    HashNode* getFromIndex(int index);
+    T get(int key) {
+        int hashIndex = hashCode(key);
+
+        int counter = 0;
+        while (table[hashIndex] != NULL) {
+            counter = 0;
+            if (counter++ > m_order) {
+                return -1;
+            }
+
+            if (table[hashIndex]->getKey() == key) {
+                return table[hashIndex]->getValue();
+            }
+
+            hashIndex++;
+            hashIndex %= m_order;
+        }
+
+        return -1;
+    }
+
+    HashNode<T>* getFromIndex(int index) {
+        return table[index];
+    }
 
     // Miscellaneous
-    void print();
-    void printKeys();
-    void update(int index, int value);
-    void updateKey(int key, int value);
+    void print() {
+        for (int i = 0; i < m_order; i++) {
+            if (table[i] == NULL) {
+                std::cout << "-1 ";
+            } else {
+                std::cout << table[i]->getValue() << " ";
+            }
+        }
+        std::cout << "\n";
+    }
+    
+    void printKeys() {
+        for (int i = 0; i < m_order; i++) {
+            if (table[i] == NULL) {
+                std::cout << "-1 ";
+            } else {
+                std::cout << table[i]->getKey() << " ";
+            }
+        }
+        std::cout << "\n";
+    }
+    
+    void update(int index, T value) {
+        table[index]->setValue(value);
+    }
+    
+    void updateKey(int key, T value) {
+        int hashIndex = hashCode(key);
+
+        int counter = 0;
+        while (table[hashIndex] != NULL) {
+            counter = 0;
+            if (counter++ > m_order) {
+                return;
+            }
+
+            if (table[hashIndex]->getKey() == key) {
+                table[hashIndex]->setValue(value);
+                return;
+            }
+
+            hashIndex++;
+            hashIndex %= m_order;
+        }
+    }
 
 };
 

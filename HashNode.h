@@ -1,12 +1,14 @@
 #ifndef HASHNODE_H_INCLUDED
 #define HASHNODE_H_INCLUDED
 
+template <class T>
 class HashNode {
 private:
     int m_key;
-    int m_value;
+    T m_value;
+    
 public:
-    HashNode(int key, int value) {
+    HashNode(int key, T value) {
         m_key = key;
         m_value = value;
     }
@@ -16,12 +18,12 @@ public:
         return m_key;
     }
 
-    int getValue() {
+    T getValue() {
         return m_value;
     }
 
     // Setters
-    void setValue(int value) {
+    void setValue(T value) {
         m_value = value;
     }
 

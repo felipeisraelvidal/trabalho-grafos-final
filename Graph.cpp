@@ -367,7 +367,7 @@ void Graph::bfs(int id, std::ofstream &output) {
 }
 
 // Kruskal
-int Graph::findInSubtree(int subtree[], int i) { //busca nas subarvores o elemento i
+int Graph::findInSubtree(int subtree[], int i) {
     if (subtree[i] == -1) {
         return i;
     }
@@ -509,7 +509,7 @@ void Graph::prim(std::ofstream &saida) {
 }
 
 // Topological sort
-void Graph::topologicalSortUtil(int nodeId, Hash *visited, int *result, int *cont) {
+void Graph::topologicalSortUtil(int nodeId, Hash<bool>*visited, int *result, int *cont) {
     visited->updateKey(nodeId, true);
 
     GraphNode *node = getNode(nodeId);
@@ -527,7 +527,7 @@ void Graph::topologicalSortUtil(int nodeId, Hash *visited, int *result, int *con
 }
 
 int* Graph::topologicalSort(std::ofstream &output) {
-    Hash hash(m_order);
+    Hash<bool> hash(m_order);
 
     GraphNode *node = firstNode;
     while (node != nullptr) {

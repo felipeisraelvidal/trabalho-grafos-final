@@ -24,7 +24,7 @@ private:
     std::vector<AuxGraphEdge> m_edges;
 
     // Kruskal
-    int findInSubtree(int subtree[], int i);
+    int findInSubtree(int subtree[], int i); // searches the subtrees for element i
     void joinSubtrees(int *subtree, int u, int v);
 
     // Prim
@@ -42,7 +42,7 @@ private:
     }
 
     // Topological sort
-    void topologicalSortUtil(int nodeId, Hash *visited, int *result, int *cont);
+    void topologicalSortUtil(int nodeId, Hash<bool> *visited, int *result, int *cont);
 
 public:
     Graph(bool isDirected, bool isWeightedEdges, bool isWeightedNodes);
@@ -80,6 +80,9 @@ public:
 
     // Breadth-first search (Busca em Largura)
     void bfs(int id, std::ofstream &output);
+
+    // Dijkstra
+    void dijkstra();
 
     // Kruskal
     void kruskal(std::ofstream &output);
