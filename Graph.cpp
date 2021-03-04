@@ -13,6 +13,7 @@ Graph::Graph(bool isDirected, bool isWeightedEdges, bool isWeightedNodes) {
     m_isDirected = isDirected;
     m_isWeightedEdges = isWeightedEdges;
     m_isWeightedNodes = isWeightedNodes;
+    
     firstNode = nullptr;
     lastNode = nullptr;
 
@@ -363,6 +364,70 @@ void Graph::bfs(int id, std::ofstream &output) {
     }
     output << "}\n";
     std::cout << "}\n";
+}
+
+// Kruskal
+int Graph::findInSubtree(int subtree[], int i) { //busca nas subarvores o elemento i
+    if (subtree[i] == -1) {
+        return i;
+    }
+    return findInSubtree(subtree, subtree[i]);
+}
+
+void Graph::joinSubtrees(int *subtree, int u, int v) {
+    int u_set = findInSubtree(subtree, u);
+    int v_set = findInSubtree(subtree, v);
+    subtree[u_set] = v_set;
+}
+
+void Graph::kruskal(std::ofstream &output) {
+    std::vector<AuxGraphEdge> vetEdges;
+
+    float weight = 0;
+
+    sort(m_edges.begin(), m_edges.end());
+
+    int *subtrees = (int *)malloc(sizeof(int) * m_order);
+    memset(subtrees, -1, sizeof(int) * m_order);
+
+    std::string graphType;
+    std::string nodesSeparator;
+    if (this->m_isDirected) {
+        graphType = "digraph";
+        nodesSeparator = "->";
+    } else {
+        graphType = "graph";
+        nodesSeparator = "--";
+    }
+
+    output << graphType << " Kruskal {\n";
+    std::cout << graphType << " Kruskal {\n";
+    const std::string quote = "\"";
+
+    for (int i = 0; i < m_edges.size(); i++) {
+        int u = findInSubtree(subtrees, m_edges.at(i).getSourceId());
+        int v = findInSubtree(subtrees, m_edges.at(i).getDestinationId());
+
+        if (u != v) {
+            vetEdges.push_back(m_edges.at(i));
+            joinSubtrees(subtrees, u, v);
+        }
+    }
+
+    for (int i = 0; i < vetEdges.size(); i++) {
+        int v1 = vetEdges.at(i).getSourceId();
+        int v2 = vetEdges.at(i).getDestinationId();
+
+        weight += vetEdges.at(i).getWeight();
+
+        std::cout << "\t" << v1 << " " << nodesSeparator << " " << v2 << " [label" << quote << vetEdges[i].getWeight() << quote << "]\n";
+        output << "\t" << v1 << " " << nodesSeparator << " " << v2 << " [label" << quote << vetEdges[i].getWeight() << quote << "]\n";
+    }
+
+    std::cout << "}\n";
+    output << "}\n";
+
+    std::cout << "Weight of MST is " << weight << "\n";
 }
 
 // Prim

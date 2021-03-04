@@ -130,6 +130,7 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
     }
     case 4: {
         std::cout << "Árvore Geradora Mínima de Kruskal\n";
+        graph->kruskal(output_file);
         break;
     }
     case 5: {

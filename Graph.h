@@ -23,6 +23,10 @@ private:
 
     std::vector<AuxGraphEdge> m_edges;
 
+    // Kruskal
+    int findInSubtree(int subtree[], int i);
+    void joinSubtrees(int *subtree, int u, int v);
+
     // Prim
     bool isNodeVisited(int *visitedNodes, int id, int tam);
 
@@ -76,6 +80,9 @@ public:
 
     // Breadth-first search (Busca em Largura)
     void bfs(int id, std::ofstream &output);
+
+    // Kruskal
+    void kruskal(std::ofstream &output);
 
     // Prim
     void prim(std::ofstream &output);

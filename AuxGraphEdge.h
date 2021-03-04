@@ -44,6 +44,10 @@ public:
         m_weight = weight;
     }
 
+    bool operator < (const AuxGraphEdge& edge2) const {
+		return (m_weight < edge2.m_weight);
+	}
+
 };
 
 #endif // AUXGRAPHEDGE_H_INCLUDED
