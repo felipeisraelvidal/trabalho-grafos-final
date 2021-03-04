@@ -5,6 +5,7 @@
 GraphEdge::GraphEdge(int id, int targetId) {
     m_id = id;
     m_targetId = targetId;
+    nextEdge = nullptr;
 }
 
 // Getters

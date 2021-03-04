@@ -6,6 +6,9 @@
 
 GraphNode::GraphNode(int id) {
     m_id = id;
+    firstEdge = nullptr;
+    lastEdge = nullptr;
+    nextNode = nullptr;
 }
 
 // Getters

@@ -1,0 +1,29 @@
+{
+    // Arquivo resposável por compilar o codigo.
+    //O que faz o papel do comando g++ *.cpp -o execGrupo1
+    "tasks": [ 
+        {
+            "type": "cppbuild",
+            "label": "task",    //nome para que o lauch.json possa rodar esse arquivo
+            "command": "g++", //Primeiro comando
+            "args": [ //Argumentos
+                "-g", //Necessário para identificar os breakpoints e fazer o debug
+                "*.cpp",
+                "-o",
+                "execGrupo1"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}" 
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Tarefa gerada pelo Depurador."
+        }
+    ],
+    "version": "2.0.0"
+}

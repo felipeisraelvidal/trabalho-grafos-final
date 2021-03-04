@@ -1,0 +1,29 @@
+{
+    // Compila o codigo chamando o task.json e executa o comando: 
+    // ./exec input.clu output.txt 0 1 0
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "g++ - Criar e depurar o arquivo ativo", 
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/execGrupo1", //Executável gerado pela task
+            "args": ["input.clu","output.txt","0","1","0"], //Argumentos para rodar o programa
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar a reformatação automática para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "task", //Nome da task definada no atributo label do task.json
+            "miDebuggerPath": "/usr/bin/gdb" //Local onde está instalado o compilador
+                                            //Caso for Windows mudar para: C:\\MinGW\\bin\\gdb.exe
+        }
+    ]
+}

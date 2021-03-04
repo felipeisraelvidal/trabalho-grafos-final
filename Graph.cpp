@@ -13,6 +13,8 @@ Graph::Graph(bool isDirected, bool isWeightedEdges, bool isWeightedNodes) {
     m_isDirected = isDirected;
     m_isWeightedEdges = isWeightedEdges;
     m_isWeightedNodes = isWeightedNodes;
+    firstNode = nullptr;
+    lastNode = nullptr;
 
     edgesCount = 0;
 }
@@ -143,7 +145,7 @@ void Graph::insertEdge(int id, int targetId, float weight) {
 
             // Insert new edge in list
             AuxGraphEdge newEdge(id, targetId, weight);
-            this->m_edges.insert(m_edges.begin() + (m_edges.size() - 1), newEdge);
+            this->m_edges.push_back(newEdge);
             std::cout << "Inserted: " << newEdge.getSourceId() << " - " << newEdge.getDestinationId() << "(" << newEdge.getWeight() << ")\n";
 
             edgesCount++;
@@ -153,7 +155,7 @@ void Graph::insertEdge(int id, int targetId, float weight) {
 
             // Insert new edge in list
             AuxGraphEdge newEdge(targetId, id, weight);
-            this->m_edges.insert(m_edges.begin() + (m_edges.size() - 1), newEdge);
+            this->m_edges.push_back(newEdge);
             std::cout << "Inserted: " << newEdge.getSourceId() << " - " << newEdge.getDestinationId() << "(" << newEdge.getWeight() << ")\n";
 
             edgesCount++;
