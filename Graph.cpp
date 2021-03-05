@@ -499,10 +499,6 @@ void Graph::dijkstra(std::ofstream &output) {
 
     auxDijkstra(&dist, &visited, &previous, &previousWeight, src);
 
-    std::cout << "============== DIST ==============\n";
-    dist.printKeys();
-    dist.print();
-
     if (dist.get(dest) != -1) {
         std::vector<std::pair<int, float> > finalList;
 
