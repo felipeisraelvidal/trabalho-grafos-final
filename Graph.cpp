@@ -597,8 +597,6 @@ void Graph::kruskal(std::ofstream &output) {
 
     std::cout << "}\n";
     output << "}\n";
-
-    std::cout << "Weight of MST is " << weight << "\n";
 }
 
 // Prim
