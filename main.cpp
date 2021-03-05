@@ -122,6 +122,12 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
     }
     case 2: {
         std::cout << "Caminho Mínimo entre dois vértices - Dijkstra\n";
+        int src, dest;
+        std::cout << "Source: ";
+        std::cin >> src;
+        std::cout << "Destination: ";
+        std::cin >> dest;
+        graph->dijkstra(src, dest, output_file);
         break;
     }
     case 3: {

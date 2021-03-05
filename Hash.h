@@ -74,9 +74,9 @@ public:
     void print() {
         for (int i = 0; i < m_order; i++) {
             if (table[i] == NULL) {
-                std::cout << "-1 ";
+                std::cout << "-1\t ";
             } else {
-                std::cout << table[i]->getValue() << " ";
+                std::cout << table[i]->getValue() << "\t";
             }
         }
         std::cout << "\n";
@@ -85,15 +85,15 @@ public:
     void printKeys() {
         for (int i = 0; i < m_order; i++) {
             if (table[i] == NULL) {
-                std::cout << "-1 ";
+                std::cout << "-1\t";
             } else {
-                std::cout << table[i]->getKey() << " ";
+                std::cout << table[i]->getKey() << "\t";
             }
         }
         std::cout << "\n";
     }
     
-    void update(int index, T value) {
+    void updateAtIndex(int index, T value) {
         table[index]->setValue(value);
     }
     

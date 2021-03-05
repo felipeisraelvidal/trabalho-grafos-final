@@ -23,6 +23,10 @@ private:
 
     std::vector<AuxGraphEdge> m_edges;
 
+    // Dijkstra
+    int minDistance(Hash<int> *dist, Hash<bool> *visited);
+    void auxDijkstra(Hash<float> *dist, Hash<bool> *visited, Hash<int> *previous, Hash<float> *previousWeight, int atual);
+
     // Kruskal
     int findInSubtree(int subtree[], int i); // searches the subtrees for element i
     void joinSubtrees(int *subtree, int u, int v);
@@ -82,7 +86,7 @@ public:
     void bfs(int id, std::ofstream &output);
 
     // Dijkstra
-    void dijkstra();
+    void dijkstra(int src, int dest, std::ofstream &output);
 
     // Kruskal
     void kruskal(std::ofstream &output);

@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string>
 #include <queue>
+#include <set>
+#include <list>
 #include <vector>
 #include "Graph.h"
 #include "AuxGraphEdge.h"
@@ -364,6 +366,164 @@ void Graph::bfs(int id, std::ofstream &output) {
     }
     output << "}\n";
     std::cout << "}\n";
+}
+
+// Dijkstra
+int Graph::minDistance(Hash<int> *dist, Hash<bool> *visited) {
+    int min = INT_MAX, minIndex;
+    GraphNode *node = firstNode;
+    while (node != nullptr) {
+        if (visited->get(node->getId()) == false && dist->get(node->getId()) <= min) {
+            min = dist->get(node->getId());
+            minIndex = node->getId();
+        }
+        node = node->getNextNode();
+    }
+    return -1;
+}
+
+void Graph::auxDijkstra(Hash<float> *dist, Hash<bool> *visited, Hash<int> *previous, Hash<float> *previousWeight, int currentId) {
+    GraphNode *node = getNode(currentId);
+    if (node != nullptr) {
+        GraphEdge *edge = node->getFirstEdge();
+
+        int edgeIndex;
+        while (edge != nullptr) {
+            edgeIndex = edge->getTargetId();
+
+            if (dist->get(edgeIndex) != -1) {
+                if (m_isWeightedEdges) {
+                    if (dist->get(edgeIndex) > dist->get(currentId) + edge->getWeight()) {
+                        dist->updateKey(edgeIndex, dist->get(currentId) + edge->getWeight());
+                        previous->updateKey(edgeIndex, currentId);
+                        previousWeight->updateKey(edgeIndex, edge->getWeight());
+
+                        std::cout << "IF 1\n";
+                        std::cout << edge->getTargetId() << " - " << currentId << " - (" << edge->getWeight() << ")\n";
+                    }
+                } else {
+                    if (dist->get(edgeIndex) > dist->get(currentId) + 1) {
+                        dist->updateKey(edgeIndex, dist->get(currentId) + 1);
+                        previous->updateKey(edgeIndex, currentId);
+                        previousWeight->updateKey(edgeIndex, edge->getWeight());
+
+                        std::cout << "IF 2\n";
+                        std::cout << edge->getTargetId() << " - " << currentId << " - (" << edge->getWeight() << ")\n";
+                    }
+                }
+            } else {
+                if (m_isWeightedEdges) {
+                    dist->updateKey(edgeIndex, dist->get(currentId) + edge->getWeight());
+                    previous->updateKey(edgeIndex, currentId);
+                    previousWeight->updateKey(edgeIndex, edge->getWeight());
+
+                    std::cout << "IF 3\n";
+                    std::cout << edge->getTargetId() << " - " << currentId << " - (" << edge->getWeight() << ")\n";
+                } else {
+                    dist->updateKey(edgeIndex, dist->get(currentId) + 1);
+                    previous->updateKey(edgeIndex, currentId);
+                    previousWeight->updateKey(edgeIndex, edge->getWeight());
+
+                    std::cout << "IF 4\n";
+                    std::cout << edge->getTargetId() << " - " << currentId << " - (" << edge->getWeight() << ")\n";
+                }
+            }
+            edge = edge->getNextEdge();
+        }
+
+        int min = -1;
+
+        GraphNode *auxNode = firstNode;
+        while (auxNode != nullptr) {
+            if (min == -1) {
+                if (visited->get(auxNode->getId())) {
+                    if (dist->get(auxNode->getId()) != -1) {
+                        min = dist->get(auxNode->getId());
+                        currentId = auxNode->getId();
+                    }
+                }
+            }
+            auxNode = auxNode->getNextNode();
+        }
+
+        if (min != -1) {
+            GraphNode *auxNode2 = firstNode;
+            while (auxNode2 != nullptr) {
+                if (visited->get(auxNode2->getId())) {
+                    if (dist->get(auxNode2->getId()) != -1) {
+                        if (dist->get(auxNode2->getId()) < min) {
+                            min = dist->get(auxNode2->getId());
+                            currentId = auxNode2->getId();
+                        }
+                    }
+                }
+                auxNode2 = auxNode2->getNextNode();
+            }
+            visited->updateKey(currentId, false);
+            auxDijkstra(dist, visited, previous, previousWeight, currentId);
+        }
+    }
+}
+
+void Graph::dijkstra(int src, int dest, std::ofstream &output) {
+    Hash<float> dist(m_order);
+    Hash<bool> visited(m_order);
+    Hash<int> previous(m_order);
+    Hash<float> previousWeight(m_order);
+
+    GraphNode *no = firstNode;
+    for (int i = 0; i < m_order; i++, no = no->getNextNode()) {
+        if (no->getId() == src) {
+            dist.insert(no->getId(), 0);
+            visited.insert(no->getId(), false);
+        } else {
+            dist.insert(no->getId(), -1);
+            visited.insert(no->getId(), true);
+        }
+        previous.insert(no->getId(), -1);
+        previousWeight.insert(no->getId(), -1);
+    }
+
+    auxDijkstra(&dist, &visited, &previous, &previousWeight, src);
+
+    if (dist.get(dest) != -1) {
+        std::vector<std::pair<int, float> > finalList;
+
+        finalList.insert(finalList.begin() + 0, std::make_pair(dest, previousWeight.get(dest)));
+
+        int path = previous.get(dest);
+        while (path != -1) {
+            finalList.insert(finalList.begin() + 0, std::make_pair(path, previousWeight.get(path)));
+            path = previous.get(path);
+        }
+
+        std::string graphType;
+        std::string nodesSeparator;
+        if (this->m_isDirected) {
+            graphType = "digraph";
+            nodesSeparator = "->";
+        } else {
+            graphType = "graph";
+            nodesSeparator = "--";
+        }
+
+        output << graphType << " Dijkstra {\n";
+        std::cout << graphType << " Dijkstra {\n";
+        const std::string quote = "\"";
+
+        for (int i = 0; i < finalList.size(); i++) {
+            if (finalList[i + 1].first != 0) {
+                output << "\t" << finalList[i].first << " " << nodesSeparator << " " << finalList[i + 1].first << " [label" << "=" << finalList[i + 1].second << "]\n";
+                std::cout << "\t" << finalList[i].first << " " << nodesSeparator << " " << finalList[i + 1].first << " [label" << "="  << finalList[i + 1].second << "]\n";
+
+            }
+        }
+
+        std::cout << "}\n";
+        output << "}\n";
+    } else {
+        std::cout << "[" << src << ", " << dest << "] - -1\n\n";
+    }
 }
 
 // Kruskal
