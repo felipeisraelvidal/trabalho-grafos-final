@@ -134,7 +134,6 @@ void Graph::insertEdge(int id, int targetId, float weight) {
             // Insert new edge in list
             AuxGraphEdge newEdge(id, targetId, weight);
             m_edges.push_back(newEdge);
-            // std::cout << "Inserted: " << newEdge.getSourceId() << " - " << newEdge.getDestinationId() << "(" << newEdge.getWeight() << ")\n";
 
             edgesCount++;
         }
@@ -149,7 +148,6 @@ void Graph::insertEdge(int id, int targetId, float weight) {
             // Insert new edge in list
             AuxGraphEdge newEdge(id, targetId, weight);
             this->m_edges.push_back(newEdge);
-            std::cout << "Inserted: " << newEdge.getSourceId() << " - " << newEdge.getDestinationId() << "(" << newEdge.getWeight() << ")\n";
 
             edgesCount++;
         }
@@ -159,7 +157,6 @@ void Graph::insertEdge(int id, int targetId, float weight) {
             // Insert new edge in list
             AuxGraphEdge newEdge(targetId, id, weight);
             this->m_edges.push_back(newEdge);
-            std::cout << "Inserted: " << newEdge.getSourceId() << " - " << newEdge.getDestinationId() << "(" << newEdge.getWeight() << ")\n";
 
             edgesCount++;
         }
@@ -261,6 +258,7 @@ Graph* Graph::inducedSubgraph(std::ofstream &output) {
     }
 
     output << graphType << " SubgrafoInduzido {\n";
+    std::cout << graphType << " SubgrafoInduzido {\n";
 
     for (int i = 0; i < m_order; i++) {
         check[i] = 0;
@@ -269,7 +267,6 @@ Graph* Graph::inducedSubgraph(std::ofstream &output) {
     }
 
     for (int i = 0; i < tam; i++) {
-        std::cout << "teste: " << vet[i] << "\n";
         if (!searchNode(vet[i])) {
             std::cout << "Elemento " << vet[i] << " nao pertence ao grafo. Não eh possivel gerar o subgrafo induzido.\n";
 
@@ -303,7 +300,9 @@ Graph* Graph::inducedSubgraph(std::ofstream &output) {
                         while (edge != nullptr) {
                             if (edge->getTargetId() == vet[j]) {
                                 subgraph->insertEdge(vet[i], vet[j], edge->getWeight());
-                                // saida << "\t" << vet[i] << " " << nodesSeparator << " " << vet[j] << "\n";
+
+                                output << "\t" << vet[i] << " " << nodesSeparator << " " << vet[j] << "\n";
+                                std::cout << "\t" << vet[i] << " " << nodesSeparator << " " << vet[j] << "\n";
                             }
                             edge = edge->getNextEdge();
                         }
@@ -313,8 +312,8 @@ Graph* Graph::inducedSubgraph(std::ofstream &output) {
         }
     }
 
-    output << "}";
-    subgraph->print();
+    output << "}\n";
+    std::cout << "}\n";
 
     delete check;
     delete nodes;
