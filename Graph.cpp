@@ -232,7 +232,17 @@ void Graph::print() {
 }
 
 // Induced subgraph
-Graph* Graph::inducedSubgraph(int *vet, int tam, std::ofstream &output) {
+Graph* Graph::inducedSubgraph(std::ofstream &output) {
+    // Enter params
+    int tam;
+    std::cout << "Size of nodes list: ";
+    std::cin >> tam;
+    int *vet = (int *)malloc(sizeof(int) * tam);
+    for (int i = 0; i < tam; i++) {
+        std::cout << "Node " << i + 1 << ": ";
+        std::cin >> vet[i];
+    }
+
     int *check = (int *)malloc(sizeof(int *) * m_order);
     int *nodes = (int *)malloc(sizeof(int *) * m_order);
 
@@ -313,59 +323,68 @@ Graph* Graph::inducedSubgraph(int *vet, int tam, std::ofstream &output) {
 }
 
 // Breadth-first search
-void Graph::bfs(int id, std::ofstream &output) {
-    int *map = (int *)malloc(sizeof(int *) * m_order);
-    bool *visited = (bool *)malloc(sizeof(bool *) * m_order);
-    int index;
+void Graph::bfs(std::ofstream &output) {
+    if (m_isDirected) {
+        std::cout << "Imprimir caminhamento em largura\n";
+        int startingNode;
+        std::cout << "Enter the starting node: ";
+        std::cin >> startingNode;
 
-    GraphNode *node = firstNode;
+        int *map = (int *)malloc(sizeof(int *) * m_order);
+        bool *visited = (bool *)malloc(sizeof(bool *) * m_order);
+        int index;
 
-    for (int i = 0; i < m_order; i++, node = node->getNextNode()) {
-        map[i] = node->getId();
-        visited[i] = false;
-    }
+        GraphNode *node = firstNode;
 
-    std::queue<int> queue;
-    index = getIndexFromArray<int>(map, m_order, id);
-    visited[index] = true;
-    queue.push(id);
-
-    std::string graphType;
-    std::string nodesSeparator;
-    if (this->m_isDirected) {
-        graphType = "digraph";
-        nodesSeparator = "->";
-    } else {
-        graphType = "graph";
-        nodesSeparator = "--";
-    }
-
-    output << graphType << " BuscaLargura {\n";
-    std::cout << graphType << " BuscaLargura {\n";
-
-    GraphNode *auxNode;
-
-    while (!queue.empty()) {
-        auxNode = getNode(queue.front());
-
-        GraphEdge *auxEdge = auxNode->getFirstEdge();
-        while (auxEdge != nullptr) {
-            index = getIndexFromArray<int>(map, m_order, auxEdge->getTargetId());
-            if (visited[index] == false) {
-                output << "\t" << auxNode->getId() << " " << nodesSeparator << " " << auxEdge->getTargetId() << "\n";
-                std::cout << "\t" << auxNode->getId() << " " << nodesSeparator << " " << auxEdge->getTargetId() << "\n";
-                visited[index] = true;
-                queue.push(auxEdge->getTargetId());
-            } else {
-                output << "\t" << auxNode->getId() << " " << nodesSeparator << " " << auxEdge->getTargetId() << " [style=dotted];\n";
-                std::cout << "\t" << auxNode->getId() << " " << nodesSeparator << " " << auxEdge->getTargetId() << " [style=dotted];\n";
-            }
-            auxEdge = auxEdge->getNextEdge();
+        for (int i = 0; i < m_order; i++, node = node->getNextNode()) {
+            map[i] = node->getId();
+            visited[i] = false;
         }
-        queue.pop();
+
+        std::queue<int> queue;
+        index = getIndexFromArray<int>(map, m_order, startingNode);
+        visited[index] = true;
+        queue.push(startingNode);
+
+        std::string graphType;
+        std::string nodesSeparator;
+        if (this->m_isDirected) {
+            graphType = "digraph";
+            nodesSeparator = "->";
+        } else {
+            graphType = "graph";
+            nodesSeparator = "--";
+        }
+
+        output << graphType << " BuscaLargura {\n";
+        std::cout << graphType << " BuscaLargura {\n";
+
+        GraphNode *auxNode;
+
+        while (!queue.empty()) {
+            auxNode = getNode(queue.front());
+
+            GraphEdge *auxEdge = auxNode->getFirstEdge();
+            while (auxEdge != nullptr) {
+                index = getIndexFromArray<int>(map, m_order, auxEdge->getTargetId());
+                if (visited[index] == false) {
+                    output << "\t" << auxNode->getId() << " " << nodesSeparator << " " << auxEdge->getTargetId() << "\n";
+                    std::cout << "\t" << auxNode->getId() << " " << nodesSeparator << " " << auxEdge->getTargetId() << "\n";
+                    visited[index] = true;
+                    queue.push(auxEdge->getTargetId());
+                } else {
+                    output << "\t" << auxNode->getId() << " " << nodesSeparator << " " << auxEdge->getTargetId() << " [style=dotted];\n";
+                    std::cout << "\t" << auxNode->getId() << " " << nodesSeparator << " " << auxEdge->getTargetId() << " [style=dotted];\n";
+                }
+                auxEdge = auxEdge->getNextEdge();
+            }
+            queue.pop();
+        }
+        output << "}\n";
+        std::cout << "}\n";
+    } else {
+        std::cout << "The graphs needs to be directed.\n";
     }
-    output << "}\n";
-    std::cout << "}\n";
 }
 
 // Dijkstra
@@ -453,7 +472,14 @@ void Graph::auxDijkstra(Hash<float> *dist, Hash<bool> *visited, Hash<int> *previ
     }
 }
 
-void Graph::dijkstra(int src, int dest, std::ofstream &output) {
+void Graph::dijkstra(std::ofstream &output) {
+    // Enter params
+    int src, dest;
+    std::cout << "Source: ";
+    std::cin >> src;
+    std::cout << "Destination: ";
+    std::cin >> dest;
+
     Hash<float> dist(m_order);
     Hash<bool> visited(m_order);
     Hash<int> previous(m_order);
@@ -678,34 +704,39 @@ void Graph::topologicalSortUtil(int nodeId, Hash<bool>*visited, int *result, int
 }
 
 int* Graph::topologicalSort(std::ofstream &output) {
-    Hash<bool> hash(m_order);
+    if (m_isDirected) {
+        Hash<bool> hash(m_order);
 
-    GraphNode *node = firstNode;
-    while (node != nullptr) {
-        hash.insert(node->getId(), false);
-        node = node->getNextNode();
-    }
-
-    int *result = (int *)malloc(sizeof(int) * m_order);
-    int cont = m_order;
-
-    node = firstNode;
-    while (node != nullptr) {
-        if (hash.get(node->getId()) == 0) {
-            topologicalSortUtil(node->getId(), &hash, result, &cont);
+        GraphNode *node = firstNode;
+        while (node != nullptr) {
+            hash.insert(node->getId(), false);
+            node = node->getNextNode();
         }
-        node = node->getNextNode();
+
+        int *result = (int *)malloc(sizeof(int) * m_order);
+        int cont = m_order;
+
+        node = firstNode;
+        while (node != nullptr) {
+            if (hash.get(node->getId()) == 0) {
+                topologicalSortUtil(node->getId(), &hash, result, &cont);
+            }
+            node = node->getNextNode();
+        }
+
+        output << "Topological Sort:\n";
+
+        for (int i = 0; i < m_order; i++) {
+            std::cout << result[i] << " ";
+            output << result[i] << "\n";
+        }
+        std::cout << "\n";
+
+        return result;
+    } else {
+        std::cout << "The graphs needs to be directed.\n";
+        return nullptr;
     }
-
-    output << "Topological Sort:\n";
-
-    for (int i = 0; i < m_order; i++) {
-        std::cout << result[i] << " ";
-        output << result[i] << "\n";
-    }
-    std::cout << "\n";
-
-    return result;
 }
 
 // Greedy

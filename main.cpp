@@ -109,25 +109,12 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
     switch (selection) {
     case 1: {
         std::cout << "Subgrafo induzido por conjunto de vértices\n";
-        int tam;
-        std::cout << "Size of nodes list: ";
-        std::cin >> tam;
-        int *vet = (int *)malloc(sizeof(int) * tam);
-        for (int i = 0; i < tam; i++) {
-            std::cout << "Node " << i + 1 << ": ";
-            std::cin >> vet[i];
-        }
-        graph->inducedSubgraph(vet, tam, output_file);
+        graph->inducedSubgraph(output_file);
         break;
     }
     case 2: {
         std::cout << "Caminho Mínimo entre dois vértices - Dijkstra\n";
-        int src, dest;
-        std::cout << "Source: ";
-        std::cin >> src;
-        std::cout << "Destination: ";
-        std::cin >> dest;
-        graph->dijkstra(src, dest, output_file);
+        graph->dijkstra(output_file);
         break;
     }
     case 3: {
@@ -145,11 +132,7 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
         break;
     }
     case 6: {
-        std::cout << "Imprimir caminhamento em largura\n";
-        int startingNode;
-        std::cout << "Enter the starting node: ";
-        std::cin >> startingNode;
-        graph->bfs(startingNode, output_file);
+        graph->bfs(output_file);
         break;
     }
     case 7: {

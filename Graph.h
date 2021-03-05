@@ -80,13 +80,13 @@ public:
     void print(); // print the graph
 
     // Induced subgraph
-    Graph* inducedSubgraph(int *nodes, int tam, std::ofstream &output);
+    Graph* inducedSubgraph(std::ofstream &output);
 
     // Breadth-first search (Busca em Largura)
-    void bfs(int id, std::ofstream &output);
+    void bfs(std::ofstream &output);
 
     // Dijkstra
-    void dijkstra(int src, int dest, std::ofstream &output);
+    void dijkstra(std::ofstream &output);
 
     // Kruskal
     void kruskal(std::ofstream &output);
