@@ -15,6 +15,8 @@ Graph::Graph(bool isDirected, bool isWeightedEdges, bool isWeightedNodes) {
     m_isDirected = isDirected;
     m_isWeightedEdges = isWeightedEdges;
     m_isWeightedNodes = isWeightedNodes;
+
+    m_numberOfGroups = 0;
     
     firstNode = nullptr;
     lastNode = nullptr;
@@ -92,6 +94,11 @@ GraphEdge* Graph::getEdgeBetween(int id, int targetId) {
         node = node->getNextNode();
     }
     return nullptr;
+}
+
+// Setters
+void Graph::setNumberOfGroups(int qtd) {
+    m_numberOfGroups = qtd;
 }
 
 // Insertion and removal
@@ -737,6 +744,120 @@ void Graph::greedy() {
 
 }
 
-void Graph::randomizedGreedy() {
+std::vector<AuxGraphEdge> Graph::constroiLCR(std::vector<AuxGraphEdge> edges, float alpha) {
+    float c_min = edges.begin()->getWeight();
+    // std::cout << "c min: " << c_min << "\n";
+    float c_max = edges.back().getWeight();
+    // std::cout << "c max: " << c_max << "\n";
+    float c_total = (c_min + (alpha * (c_max-c_min)));
+    // std::cout << "c total: " << c_total << "\n";
+
+    std::vector<AuxGraphEdge> result;
+    for (int i = 0; i < edges.size(); i++) {
+        if (edges[i].getWeight() <= c_total) {
+            result.push_back(edges[i]);
+            // std::cout << result.at(i).getSourceId() << " - " << result.at(i).getDestinationId() << "\n";
+        }
+    }
+
+    return result;
+}
+
+int Graph::randomEdge(std::vector<AuxGraphEdge> edges) {
+    std::srand(time(NULL));
+    int index = rand() % (edges.size() - 1);
+    return index;
+    // AuxGraphEdge edge = edges[index];
+    // std::cout << "Random edge: " << edge.getSourceId() << " - " << edge.getDestinationId() << "\n";
+    // return edge;
+}
+
+int* Graph::randomizedGreedy() {
+    std::vector<AuxGraphEdge> vetEdges = m_edges;
+    std::sort(vetEdges.begin(), vetEdges.end());
+
+    for (int i = 0; i < vetEdges.size(); i++) {
+        std::cout << vetEdges[i].getSourceId() << " - " << vetEdges[i].getDestinationId() << "\n";
+    }
+    std::cout << "\n";
+
+    int *T = (int *)malloc(sizeof(int) * m_numberOfGroups);
+    memset(T, -1, sizeof(int) * m_numberOfGroups);
+
+    std::vector<AuxGraphEdge> resultado;
+
+    int *listGroups = (int *)malloc(sizeof(int) * m_numberOfGroups);
+
+    int *subgroups = (int *)malloc(sizeof(int) * m_numberOfGroups);
+    memset(subgroups, 0, sizeof(int) * m_numberOfGroups);
+
+    float alpha = 0.5;
     
+    int num = m_numberOfGroups;
+    std::vector<AuxGraphEdge> L;
+    while (num > 1) {
+        L = constroiLCR(vetEdges, alpha);
+
+        for (int i = 0; i < L.size(); i++) {
+            std::cout << L[i].getSourceId() << " - " << L[i].getDestinationId() << "\n";
+        }
+        std::cout << "\n";
+
+        int index = randomEdge(L);
+        AuxGraphEdge edge = L.at(index);
+        std::cout << "edge: " << edge.getSourceId() << " - " << edge.getDestinationId() << "\n";
+        // L.erase(L.begin() + index);
+
+        // remover aresta do vetEdges
+        for (int i = 0; i < vetEdges.size(); i++) {
+            if (vetEdges.at(i).getSourceId() == edge.getSourceId() && vetEdges.at(i).getDestinationId() == edge.getDestinationId()) {
+                vetEdges.erase(vetEdges.begin() + i);
+            }
+        }
+
+        GraphNode *nodeU = getNode(edge.getSourceId());
+        GraphNode *nodeV = getNode(edge.getDestinationId());
+        if (nodeU != nullptr && nodeV != nullptr) {
+            int gu = nodeU->getGroupId();
+            int gv = nodeV->getGroupId();
+
+            if ((nodeU->getId() != nodeV->getId()) && (subgroups[gu - 1] == nodeU->getId() || subgroups[gu - 1] == 0) && (subgroups[gv - 1] == nodeV->getId() || subgroups[gv - 1] == 0)) {
+                
+                for (int i = 0; i < m_numberOfGroups; i++) {
+                    std::cout << T[i] << "\t";
+                }
+                std::cout << "\n";
+                
+                joinSubtrees(T, gu - 1, gv - 1);
+                resultado.push_back(edge);
+
+                std::cout << "group u: " << gu << "\n";
+                std::cout << "group v: " << gv << "\n";
+
+                num--;
+                if (subgroups[gu - 1] == 0) {
+                    subgroups[gu - 1] = nodeU->getId();
+                }
+                if (subgroups[gv - 1] == 0) {
+                    subgroups[gv - 1] = nodeV->getId();
+                }
+            }
+        }
+    }
+
+    // for (int i = 0; i < m_numberOfGroups; i++) {
+    //     std::cout << subgroups[i] << "\t";
+    // }
+    // std::cout << "\n";
+
+    for (int i = 0; i < m_numberOfGroups; i++) {
+        std::cout << T[i] << "\t";
+    }
+    std::cout << "\n";
+
+    for (int i = 0; i < resultado.size(); i++) {
+        std::cout << resultado.at(i).getSourceId() << " - " << resultado.at(i).getDestinationId() << "\n";
+    }
+
+    return T;
 }

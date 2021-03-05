@@ -53,6 +53,8 @@ void startReadingOtherFileExtension(Graph *graph, std::string &input_file_name, 
     std::cout << "Enter the number of nodes: ";
     std::cin >> numberOfNodes;
 
+    graph->setNumberOfGroups(numberOfGroups);
+
     int groupId;
     for (int i = 0; i < numberOfNodes; i++) {
         input_file >> groupId;
@@ -142,11 +144,12 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
     }
     case 8: {
         std::cout << "Algoritmo Guloso\n";
+        graph->greedy();
         break;
     }
     case 9: {
         std::cout << "Algoritmo Guloso Randomizado\n";
-        graph->greedy();
+        graph->randomizedGreedy();
         break;
     }
     case 10: {

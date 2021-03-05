@@ -21,6 +21,10 @@ float GraphNode::getWeight() {
     return m_weight;
 }
 
+int GraphNode::getGroupId() {
+    return m_groupId;
+}
+
 int GraphNode::getDegree() {
     return m_inDegree + m_outDegree;
 }

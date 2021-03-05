@@ -24,6 +24,7 @@ public:
     // Getters
     int getId();
     float getWeight();
+    int getGroupId();
     
     int getDegree();
     int getInDegree();

@@ -21,6 +21,8 @@ private:
 
     int edgesCount;
 
+    int m_numberOfGroups;
+
     std::vector<AuxGraphEdge> m_edges;
 
     // Dijkstra
@@ -48,6 +50,10 @@ private:
     // Topological sort
     void topologicalSortUtil(int nodeId, Hash<bool> *visited, int *result, int *cont);
 
+    // Greedy
+    std::vector<AuxGraphEdge> constroiLCR(std::vector<AuxGraphEdge> edges, float alpha);
+    int randomEdge(std::vector<AuxGraphEdge> edges);
+
 public:
     Graph(bool isDirected, bool isWeightedEdges, bool isWeightedNodes);
     ~Graph();
@@ -68,6 +74,9 @@ public:
 
     GraphNode* getNode(int id); // returns a pointer to the node with id
     GraphEdge* getEdgeBetween(int id, int targetId); // returns a pointer to the edge between id and targetId
+
+    // Setters
+    void setNumberOfGroups(int qtd);
 
     // Insertion and removal
     void insertNode(int id, float weight, int groupId);
@@ -99,7 +108,7 @@ public:
 
     // Greedy
     void greedy();
-    void randomizedGreedy();
+    int* randomizedGreedy();
 
 };
 
