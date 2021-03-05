@@ -397,18 +397,12 @@ void Graph::auxDijkstra(Hash<float> *dist, Hash<bool> *visited, Hash<int> *previ
                         dist->updateKey(edgeIndex, dist->get(currentId) + edge->getWeight());
                         previous->updateKey(edgeIndex, currentId);
                         previousWeight->updateKey(edgeIndex, edge->getWeight());
-
-                        std::cout << "IF 1\n";
-                        std::cout << edge->getTargetId() << " - " << currentId << " - (" << edge->getWeight() << ")\n";
                     }
                 } else {
                     if (dist->get(edgeIndex) > dist->get(currentId) + 1) {
                         dist->updateKey(edgeIndex, dist->get(currentId) + 1);
                         previous->updateKey(edgeIndex, currentId);
                         previousWeight->updateKey(edgeIndex, edge->getWeight());
-
-                        std::cout << "IF 2\n";
-                        std::cout << edge->getTargetId() << " - " << currentId << " - (" << edge->getWeight() << ")\n";
                     }
                 }
             } else {
@@ -416,16 +410,10 @@ void Graph::auxDijkstra(Hash<float> *dist, Hash<bool> *visited, Hash<int> *previ
                     dist->updateKey(edgeIndex, dist->get(currentId) + edge->getWeight());
                     previous->updateKey(edgeIndex, currentId);
                     previousWeight->updateKey(edgeIndex, edge->getWeight());
-
-                    std::cout << "IF 3\n";
-                    std::cout << edge->getTargetId() << " - " << currentId << " - (" << edge->getWeight() << ")\n";
                 } else {
                     dist->updateKey(edgeIndex, dist->get(currentId) + 1);
                     previous->updateKey(edgeIndex, currentId);
                     previousWeight->updateKey(edgeIndex, edge->getWeight());
-
-                    std::cout << "IF 4\n";
-                    std::cout << edge->getTargetId() << " - " << currentId << " - (" << edge->getWeight() << ")\n";
                 }
             }
             edge = edge->getNextEdge();
@@ -486,6 +474,10 @@ void Graph::dijkstra(int src, int dest, std::ofstream &output) {
 
     auxDijkstra(&dist, &visited, &previous, &previousWeight, src);
 
+    std::cout << "============== DIST ==============\n";
+    dist.printKeys();
+    dist.print();
+
     if (dist.get(dest) != -1) {
         std::vector<std::pair<int, float> > finalList;
 
@@ -509,7 +501,6 @@ void Graph::dijkstra(int src, int dest, std::ofstream &output) {
 
         output << graphType << " Dijkstra {\n";
         std::cout << graphType << " Dijkstra {\n";
-        const std::string quote = "\"";
 
         for (int i = 0; i < finalList.size(); i++) {
             if (finalList[i + 1].first != 0) {
@@ -522,7 +513,7 @@ void Graph::dijkstra(int src, int dest, std::ofstream &output) {
         std::cout << "}\n";
         output << "}\n";
     } else {
-        std::cout << "[" << src << ", " << dest << "] - -1\n\n";
+        std::cout << "An error occurred\n";
     }
 }
 
@@ -562,7 +553,6 @@ void Graph::kruskal(std::ofstream &output) {
 
     output << graphType << " Kruskal {\n";
     std::cout << graphType << " Kruskal {\n";
-    const std::string quote = "\"";
 
     for (int i = 0; i < m_edges.size(); i++) {
         int u = findInSubtree(subtrees, m_edges.at(i).getSourceId());
@@ -580,8 +570,8 @@ void Graph::kruskal(std::ofstream &output) {
 
         weight += vetEdges.at(i).getWeight();
 
-        std::cout << "\t" << v1 << " " << nodesSeparator << " " << v2 << " [label" << quote << vetEdges[i].getWeight() << quote << "]\n";
-        output << "\t" << v1 << " " << nodesSeparator << " " << v2 << " [label" << quote << vetEdges[i].getWeight() << quote << "]\n";
+        std::cout << "\t" << v1 << " " << nodesSeparator << " " << v2 << " [label" << "=" << vetEdges[i].getWeight() << "]\n";
+        output << "\t" << v1 << " " << nodesSeparator << " " << v2 << " [label" << "=" << vetEdges[i].getWeight() << "]\n";
     }
 
     std::cout << "}\n";
@@ -656,16 +646,17 @@ void Graph::prim(std::ofstream &saida) {
     }
 
     saida << graphType << " Prim {\n";
-    const std::string quote = "\"";
+    std::cout << graphType << " Prim {\n";
 
     for (int l = 0; l < edgesCountSolution; l++) {
-        std::cout << "[" << solution[l].getSourceId() << " -> " << solution[l].getDestinationId() << "] - " << solution[l].getWeight() << "\n";
-        saida << "\t" << solution[l].getSourceId() << " " << nodesSeparator << " " << solution[l].getDestinationId() << " [label" << quote << solution[l].getWeight() << quote << "]\n";
+        saida << "\t" << solution[l].getSourceId() << " " << nodesSeparator << " " << solution[l].getDestinationId() << " [label" << "=" << solution[l].getWeight() << "]\n";
+        std::cout << "\t" << solution[l].getSourceId() << " " << nodesSeparator << " " << solution[l].getDestinationId() << " [label" << "=" << solution[l].getWeight() << "]\n";
         sumWeights += solution[l].getWeight();
     }
     // cout << "Somatorio dos Pesos: " << somatorioPesos << endl;
 
     saida << "}\n";
+    std::cout << "}\n";
 }
 
 // Topological sort
