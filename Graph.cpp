@@ -619,10 +619,15 @@ bool Graph::isNodeVisited(int *visitedNodes, int id, int tam) {
 void Graph::prim(std::ofstream &saida) {
     int nodesCount = 0, edgesCountSolution = 0, i;
     float sumWeights = 0;
-    int *visitedNodes = (int *)malloc(sizeof(int *) * m_order);
+    int *visitedNodes = (int *)malloc(sizeof(int) * m_order);
 
-    AuxGraphEdge *edgesList = (AuxGraphEdge *)malloc(sizeof(AuxGraphEdge *) * edgesCount);
     AuxGraphEdge *solution = (AuxGraphEdge *)malloc(sizeof(AuxGraphEdge *) * edgesCount);
+
+    std::vector<AuxGraphEdge> vetEdges;
+    for (int i = 0; i < edgesCount; i++) {
+        AuxGraphEdge newEdge(INT_MAX, INT_MAX, INT_MAX);
+        vetEdges.push_back(newEdge);
+    }
 
     GraphNode *node = firstNode;
     while (node != nullptr) {
@@ -630,35 +635,24 @@ void Graph::prim(std::ofstream &saida) {
         visitedNodes[nodesCount] = node->getId();
         nodesCount++;
         for (GraphEdge *a = node->getFirstEdge(); a != nullptr; a = a->getNextEdge()) {
-            //só adiciona arestas caso o no de destino ainda nao foi explorado
+            // add edge if the target id was not visited yet
             if (!isNodeVisited(visitedNodes, a->getTargetId(), m_order)) {
                 i++;
-                edgesList[i].setSourceId(a->getId());
-                edgesList[i].setDestinationId(a->getTargetId());
-                edgesList[i].setWeight(a->getWeight());
+                vetEdges[i].setSourceId(a->getId());
+                vetEdges[i].setDestinationId(a->getTargetId());
+                vetEdges[i].setWeight(a->getWeight());
             }
         }
 
-        // Sort edges list
-        AuxGraphEdge aux;
-        for (int j = 0; j < i; j++) {
-            for (int k = j + 1; k < i; k++) {
-                if (edgesList[j].getWeight() > edgesList[k].getWeight()) {
-                    aux = edgesList[j];
-                    edgesList[j] = edgesList[k];
-                    edgesList[k] = aux;
-                }
-            }
-        }
+        std::sort(vetEdges.begin(), vetEdges.end());
 
-        //Caso a lista de Arestas possiveis for vazio chegou no ultimo no da solução
         if (i == -1) {
             break;
         }
 
-        solution[edgesCountSolution] = edgesList[0];
+        solution[edgesCountSolution] = vetEdges.at(0);
         edgesCountSolution++;
-        node = getNode(edgesList[0].getDestinationId());
+        node = getNode(vetEdges.at(0).getDestinationId());
     }
 
     std::string graphType;
@@ -679,7 +673,8 @@ void Graph::prim(std::ofstream &saida) {
         std::cout << "\t" << solution[l].getSourceId() << " " << nodesSeparator << " " << solution[l].getDestinationId() << " [label" << "=" << solution[l].getWeight() << "]\n";
         sumWeights += solution[l].getWeight();
     }
-    // cout << "Somatorio dos Pesos: " << somatorioPesos << endl;
+    
+    std::cout << "Somatorio dos Pesos: " << sumWeights << "\n";
 
     saida << "}\n";
     std::cout << "}\n";
