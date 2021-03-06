@@ -111,8 +111,8 @@ public:
     int* topologicalSort(std::ofstream &output);
 
     // Greedy
-    std::vector<AuxGraphEdge> greedy();
-    int* randomizedGreedy();
+    std::vector<AuxGraphEdge> greedy(std::ofstream &output);
+    std::vector<AuxGraphEdge> randomizedGreedy(std::ofstream &output);
 
     // Floyd
     void floyd();

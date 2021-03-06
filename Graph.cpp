@@ -740,14 +740,9 @@ int* Graph::topologicalSort(std::ofstream &output) {
 }
 
 // Greedy
-std::vector<AuxGraphEdge> Graph::greedy() {
+std::vector<AuxGraphEdge> Graph::greedy(std::ofstream &output) {
     std::vector<AuxGraphEdge> vetEdges = m_edges;
     std::sort(vetEdges.begin(), vetEdges.end());
-
-    for (int i = 0; i < vetEdges.size(); i++) {
-        std::cout << vetEdges[i].getSourceId() << " - " << vetEdges[i].getDestinationId() << "\n";
-    }
-    std::cout << "\n";
 
     std::vector<AuxGraphEdge> resultado;
 
@@ -763,7 +758,6 @@ std::vector<AuxGraphEdge> Graph::greedy() {
     std::vector<AuxGraphEdge> L;
     while (num > 1) {
         AuxGraphEdge edge = vetEdges.front();
-        std::cout << "edge: " << edge.getSourceId() << " - " << edge.getDestinationId() << "\n";
 
         // remover aresta do vetEdges
         vetEdges.erase(vetEdges.begin());
@@ -787,16 +781,8 @@ std::vector<AuxGraphEdge> Graph::greedy() {
 
                 if ((subgroups[gu - 1] == nodeU->getId() || subgroups[gu - 1] == 0) && (subgroups[gv - 1] == nodeV->getId() || subgroups[gv - 1] == 0)) {
                     
-                    // for (int i = 0; i < m_numberOfGroups; i++) {
-                    //     std::cout << T[i] << "\t";
-                    // }
-                    // std::cout << "\n";
-                    
                     resultado.push_back(edge);
                     joinSubtrees(subtrees, u, v);
-
-                    std::cout << "group u: " << gu << "\n";
-                    std::cout << "group v: " << gv << "\n";
 
                     num--;
                     if (subgroups[gu - 1] == 0) {
@@ -810,31 +796,27 @@ std::vector<AuxGraphEdge> Graph::greedy() {
         }
     }
 
-    // for (int i = 0; i < m_numberOfGroups; i++) {
-    //     std::cout << T[i] << "\t";
-    // }
-    // std::cout << "\n";
-
+    std::cout << "graph Greedy {\n";
+    output << "graph Greedy {\n";
     for (int i = 0; i < resultado.size(); i++) {
-        std::cout << resultado.at(i).getSourceId() << " - " << resultado.at(i).getDestinationId() << "\n";
+        std::cout << "\t" << resultado.at(i).getSourceId() << " -- " << resultado.at(i).getDestinationId() << " [label=" << resultado.at(i).getWeight() << "]\n";
+        output << "\t" << resultado.at(i).getSourceId() << " -- " << resultado.at(i).getDestinationId() << " [label=" << resultado.at(i).getWeight() << "]\n";
     }
+    std::cout << "}\n";
+    output << "}\n";
 
     return resultado;
 }
 
 std::vector<AuxGraphEdge> Graph::constroiLCR(std::vector<AuxGraphEdge> edges, float alpha) {
     float c_min = edges.begin()->getWeight();
-    // std::cout << "c min: " << c_min << "\n";
     float c_max = edges.back().getWeight();
-    // std::cout << "c max: " << c_max << "\n";
     float c_total = (c_min + (alpha * (c_max-c_min)));
-    // std::cout << "c total: " << c_total << "\n";
 
     std::vector<AuxGraphEdge> result;
     for (int i = 0; i < edges.size(); i++) {
         if (edges[i].getWeight() <= c_total) {
             result.push_back(edges[i]);
-            // std::cout << result.at(i).getSourceId() << " - " << result.at(i).getDestinationId() << "\n";
         }
     }
 
@@ -844,14 +826,10 @@ std::vector<AuxGraphEdge> Graph::constroiLCR(std::vector<AuxGraphEdge> edges, fl
 int Graph::randomEdge(std::vector<AuxGraphEdge> edges) {
     std::srand(time(NULL));
     int index = rand() % (edges.size());
-    std::cout << "random index: " << index << "\n";
     return index;
-    // AuxGraphEdge edge = edges[index];
-    // std::cout << "Random edge: " << edge.getSourceId() << " - " << edge.getDestinationId() << "\n";
-    // return edge;
 }
 
-int* Graph::randomizedGreedy() {
+std::vector<AuxGraphEdge> Graph::randomizedGreedy(std::ofstream &output) {
     float alpha = 0.5;
 
     std::cout << "Enter the alpha value: ";
@@ -865,14 +843,6 @@ int* Graph::randomizedGreedy() {
 
     std::vector<AuxGraphEdge> vetEdges = m_edges;
     std::sort(vetEdges.begin(), vetEdges.end());
-
-    for (int i = 0; i < vetEdges.size(); i++) {
-        std::cout << vetEdges[i].getSourceId() << " - " << vetEdges[i].getDestinationId() << "\n";
-    }
-    std::cout << "\n";
-
-    int *T = (int *)malloc(sizeof(int) * m_numberOfGroups);
-    memset(T, -1, sizeof(int) * m_numberOfGroups);
 
     std::vector<AuxGraphEdge> resultado;
 
@@ -889,14 +859,8 @@ int* Graph::randomizedGreedy() {
     while (num > 1) {
         L = constroiLCR(vetEdges, alpha);
 
-        for (int i = 0; i < L.size(); i++) {
-            std::cout << L[i].getSourceId() << " - " << L[i].getDestinationId() << "\n";
-        }
-        std::cout << "\n";
-
         int index = randomEdge(L);
         AuxGraphEdge edge = L.at(index);
-        std::cout << "edge: " << edge.getSourceId() << " - " << edge.getDestinationId() << "\n";
 
         // remover aresta do vetEdges
         for (int i = 0; i < vetEdges.size(); i++) {
@@ -920,19 +884,8 @@ int* Graph::randomizedGreedy() {
 
                 if ((subgroups[gu - 1] == nodeU->getId() || subgroups[gu - 1] == 0) && (subgroups[gv - 1] == nodeV->getId() || subgroups[gv - 1] == 0)) {
                     
-                    for (int i = 0; i < m_numberOfGroups; i++) {
-                        std::cout << T[i] << "\t";
-                    }
-                    std::cout << "\n";
-                    
-                    // joinSubtrees(T, gu - 1, gv - 1);
-                    // resultado.push_back(edge);
-
                     resultado.push_back(edge);
                     joinSubtrees(subtrees, u, v);
-
-                    std::cout << "group u: " << gu << "\n";
-                    std::cout << "group v: " << gv << "\n";
 
                     num--;
                     if (subgroups[gu - 1] == 0) {
@@ -946,14 +899,14 @@ int* Graph::randomizedGreedy() {
         }
     }
 
-    for (int i = 0; i < m_numberOfGroups; i++) {
-        std::cout << T[i] << "\t";
-    }
-    std::cout << "\n";
-
+    std::cout << "graph RandomizedGreedy {\n";
+    output << "graph RandomizedGreedy {\n";
     for (int i = 0; i < resultado.size(); i++) {
-        std::cout << resultado.at(i).getSourceId() << " - " << resultado.at(i).getDestinationId() << "\n";
+        std::cout << "\t" << resultado.at(i).getSourceId() << " -- " << resultado.at(i).getDestinationId() << " [label=" << resultado.at(i).getWeight() << "]\n";
+        output << "\t" << resultado.at(i).getSourceId() << " -- " << resultado.at(i).getDestinationId() << " [label=" << resultado.at(i).getWeight() << "]\n";
     }
+    std::cout << "}\n";
+    output << "}\n";
 
-    return T;
+    return resultado;
 }

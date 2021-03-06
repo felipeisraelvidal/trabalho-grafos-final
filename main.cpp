@@ -145,12 +145,62 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
     }
     case 8: {
         std::cout << "Algoritmo Guloso\n";
-        graph->greedy();
+        int qtd;
+        std::cout << "Quantos testes você gostaria de realizar? ";
+        std::cin >> qtd;
+        if (qtd > 1) {
+            for (int i = 0; i < qtd; i++) {
+                // Generate test result file
+                std::string filename = "test/test_greedy_" + std::to_string(i) + ".txt";
+                std::ofstream output_file(filename);
+
+                if (output_file.is_open()) {
+                    graph->greedy(output_file);
+                } else {
+                    std::cout << "Unable to open the output file.\n";
+                }
+            }
+        } else {
+            std::string filename = "test/test__greedy_" + std::to_string(0) + ".txt";
+            std::ofstream output_file(filename);
+            
+            if (output_file.is_open()) {
+                graph->greedy(output_file);
+                output_file.close();
+            } else {
+                std::cout << "Unable to open the output file.\n";
+            }
+        }
         break;
     }
     case 9: {
         std::cout << "Algoritmo Guloso Randomizado\n";
-        graph->randomizedGreedy();
+        int qtd;
+        std::cout << "Quantos testes você gostaria de realizar? ";
+        std::cin >> qtd;
+        if (qtd > 1) {
+            for (int i = 0; i < qtd; i++) {
+                // Generate test result file
+                std::string filename = "test/test_randomized_greedy_" + std::to_string(i) + ".txt";
+                std::ofstream output_file(filename);
+                
+                if (output_file.is_open()) {
+                    graph->randomizedGreedy(output_file);
+                } else {
+                    std::cout << "Unable to open the output file.\n";
+                }
+            }
+        } else if (qtd == 1) {
+            std::string filename = "test/test_randomized_greedy_" + std::to_string(0) + ".txt";
+            std::ofstream output_file(filename);
+            
+            if (output_file.is_open()) {
+                graph->randomizedGreedy(output_file);
+                output_file.close();
+            } else {
+                std::cout << "Unable to open the output file.\n";
+            }
+        }
         break;
     }
     case 10: {
@@ -208,6 +258,10 @@ int main(int argc, char const *argv[]) {
     // int result = hash.get(42);
     // std::cout << result << "\n";
 
+    std::ofstream file("file.txt");
+    file << "Teste!";
+    file.close();
+
     if (argc != 6) {
         std::cout << "ERROR: Expecting: ./<program_name> <input_file> <output_file> <directed> <weighted_edge> <weighted_node>\n";
         return 1;
@@ -227,7 +281,7 @@ int main(int argc, char const *argv[]) {
     std::ofstream output_file;
     input_file.open(argv[1], std::ios::in);
     output_file.open(argv[2], std::ios::out | std::ios::trunc);
-
+    
     int isDirected = atoi(argv[3]);
     int isWeightedEdge = atoi(argv[4]);
     int isWeightedNode = atoi(argv[5]);
