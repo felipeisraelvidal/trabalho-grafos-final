@@ -54,6 +54,10 @@ private:
     std::vector<AuxGraphEdge> constroiLCR(std::vector<AuxGraphEdge> edges, float alpha);
     int randomEdge(std::vector<AuxGraphEdge> edges);
 
+    // Floyd
+    void criaMatriz(float **matriz,Hash<int> noAnterior, Hash<float> mapa);
+    void auxFloyd(float **matriz, Hash<int> aPercorrer, Hash<int> noAnterior, Hash<float> mapa, int src, int dest);
+
 public:
     Graph(bool isDirected, bool isWeightedEdges, bool isWeightedNodes);
     ~Graph();
@@ -109,6 +113,9 @@ public:
     // Greedy
     void greedy();
     int* randomizedGreedy();
+
+    // Floyd
+    void floyd();
 
 };
 

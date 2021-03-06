@@ -765,7 +765,8 @@ std::vector<AuxGraphEdge> Graph::constroiLCR(std::vector<AuxGraphEdge> edges, fl
 
 int Graph::randomEdge(std::vector<AuxGraphEdge> edges) {
     std::srand(time(NULL));
-    int index = rand() % (edges.size() - 1);
+    int index = rand() % (edges.size());
+    std::cout << "random index: " << index << "\n";
     return index;
     // AuxGraphEdge edge = edges[index];
     // std::cout << "Random edge: " << edge.getSourceId() << " - " << edge.getDestinationId() << "\n";
@@ -773,6 +774,17 @@ int Graph::randomEdge(std::vector<AuxGraphEdge> edges) {
 }
 
 int* Graph::randomizedGreedy() {
+    float alpha = 0.5;
+
+    std::cout << "Enter the alpha value: ";
+    std::cin >> alpha;
+
+    while (alpha < 0 || alpha > 1) {
+        std::cout << "Inválid alpha! (0 to 1)\n";
+        std::cout << "Enter the alpha value: ";
+        std::cin >> alpha;
+    }
+
     std::vector<AuxGraphEdge> vetEdges = m_edges;
     std::sort(vetEdges.begin(), vetEdges.end());
 
@@ -791,7 +803,8 @@ int* Graph::randomizedGreedy() {
     int *subgroups = (int *)malloc(sizeof(int) * m_numberOfGroups);
     memset(subgroups, 0, sizeof(int) * m_numberOfGroups);
 
-    float alpha = 0.5;
+    int *subtrees = (int *)malloc(sizeof(int) * m_order);
+    memset(subtrees, -1, sizeof(int) * m_order);
     
     int num = m_numberOfGroups;
     std::vector<AuxGraphEdge> L;
@@ -806,49 +819,54 @@ int* Graph::randomizedGreedy() {
         int index = randomEdge(L);
         AuxGraphEdge edge = L.at(index);
         std::cout << "edge: " << edge.getSourceId() << " - " << edge.getDestinationId() << "\n";
-        // L.erase(L.begin() + index);
 
         // remover aresta do vetEdges
         for (int i = 0; i < vetEdges.size(); i++) {
             if (vetEdges.at(i).getSourceId() == edge.getSourceId() && vetEdges.at(i).getDestinationId() == edge.getDestinationId()) {
                 vetEdges.erase(vetEdges.begin() + i);
             }
+            if (vetEdges.at(i).getSourceId() == edge.getDestinationId() && vetEdges.at(i).getDestinationId() == edge.getSourceId()) {
+                vetEdges.erase(vetEdges.begin() + i);
+            }
         }
 
-        GraphNode *nodeU = getNode(edge.getSourceId());
-        GraphNode *nodeV = getNode(edge.getDestinationId());
-        if (nodeU != nullptr && nodeV != nullptr) {
-            int gu = nodeU->getGroupId();
-            int gv = nodeV->getGroupId();
+        int u = findInSubtree(subtrees, edge.getSourceId());
+        int v = findInSubtree(subtrees, edge.getDestinationId());
 
-            if ((nodeU->getId() != nodeV->getId()) && (subgroups[gu - 1] == nodeU->getId() || subgroups[gu - 1] == 0) && (subgroups[gv - 1] == nodeV->getId() || subgroups[gv - 1] == 0)) {
-                
-                for (int i = 0; i < m_numberOfGroups; i++) {
-                    std::cout << T[i] << "\t";
-                }
-                std::cout << "\n";
-                
-                joinSubtrees(T, gu - 1, gv - 1);
-                resultado.push_back(edge);
+        if (u != v) {
+            GraphNode *nodeU = getNode(edge.getSourceId());
+            GraphNode *nodeV = getNode(edge.getDestinationId());
+            if (nodeU != nullptr && nodeV != nullptr) {
+                int gu = nodeU->getGroupId();
+                int gv = nodeV->getGroupId();
 
-                std::cout << "group u: " << gu << "\n";
-                std::cout << "group v: " << gv << "\n";
+                if ((subgroups[gu - 1] == nodeU->getId() || subgroups[gu - 1] == 0) && (subgroups[gv - 1] == nodeV->getId() || subgroups[gv - 1] == 0)) {
+                    
+                    for (int i = 0; i < m_numberOfGroups; i++) {
+                        std::cout << T[i] << "\t";
+                    }
+                    std::cout << "\n";
+                    
+                    // joinSubtrees(T, gu - 1, gv - 1);
+                    // resultado.push_back(edge);
 
-                num--;
-                if (subgroups[gu - 1] == 0) {
-                    subgroups[gu - 1] = nodeU->getId();
-                }
-                if (subgroups[gv - 1] == 0) {
-                    subgroups[gv - 1] = nodeV->getId();
+                    resultado.push_back(edge);
+                    joinSubtrees(subtrees, u, v);
+
+                    std::cout << "group u: " << gu << "\n";
+                    std::cout << "group v: " << gv << "\n";
+
+                    num--;
+                    if (subgroups[gu - 1] == 0) {
+                        subgroups[gu - 1] = nodeU->getId();
+                    }
+                    if (subgroups[gv - 1] == 0) {
+                        subgroups[gv - 1] = nodeV->getId();
+                    }
                 }
             }
         }
     }
-
-    // for (int i = 0; i < m_numberOfGroups; i++) {
-    //     std::cout << subgroups[i] << "\t";
-    // }
-    // std::cout << "\n";
 
     for (int i = 0; i < m_numberOfGroups; i++) {
         std::cout << T[i] << "\t";
