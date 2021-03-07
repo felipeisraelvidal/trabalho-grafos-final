@@ -7,6 +7,9 @@
 #include "Graph.h"
 #include "Hash.h"
 
+#define PBSTR "------------------------------------------------------------"
+#define PBWIDTH 60
+
 void startReadingTxt(Graph *graph, std::ifstream &input_file) {
     int order;
     int idNodeSource;
@@ -43,6 +46,14 @@ void startReadingTxt(Graph *graph, std::ifstream &input_file) {
     }
 }
 
+void printProgress(double percentage) {
+    int val = (int) (percentage * 100);
+    int lpad = (int) (percentage * PBWIDTH);
+    int rpad = PBWIDTH - lpad;
+    printf("\r%3d%% [%.*s%*s]", val, lpad, PBSTR, rpad, "");
+    fflush(stdout);
+}
+
 void startReadingOtherFileExtension(Graph *graph, std::string &input_file_name, std::ifstream &input_file) {
     int numberOfGroups;
     int numberOfNodes;
@@ -55,19 +66,36 @@ void startReadingOtherFileExtension(Graph *graph, std::string &input_file_name, 
 
     graph->setNumberOfGroups(numberOfGroups);
 
+    // Count number of edges in file
+    int numEdges = 0;
+    std::string unused;
+    while (getline(input_file, unused) ) {
+        ++numEdges;
+    }
+
+    input_file.clear();
+    input_file.seekg(0, std::ios::beg);
+
+    numEdges -= (1 + numberOfNodes);
+
+    // Insert nodes
     int groupId;
     for (int i = 0; i < numberOfNodes; i++) {
         input_file >> groupId;
-        std::cout << "Node: " << i << " - group: " << groupId << "\n";
         graph->insertNode(i, 0, groupId);
     }
 
+    // Insert edges
     int nodeId;
     int targetId;
     float edgeWeight;
 
+    int counter = 0;
     while (input_file >> nodeId >> targetId >> edgeWeight) {
+        float progress = (float(counter) * 100) / float(numEdges);
+        printProgress(progress / 100);
         graph->insertEdge(nodeId, targetId, edgeWeight);
+        counter++;
     }
 }
 
@@ -280,7 +308,7 @@ int main(int argc, char const *argv[]) {
     std::ifstream input_file;
     std::ofstream output_file;
     input_file.open(argv[1], std::ios::in);
-    output_file.open(argv[2], std::ios::out | std::ios::trunc);
+    output_file.open(argv[2], std::ios::out - std::ios::trunc);
     
     int isDirected = atoi(argv[3]);
     int isWeightedEdge = atoi(argv[4]);

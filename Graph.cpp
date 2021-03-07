@@ -5,6 +5,7 @@
 #include <set>
 #include <list>
 #include <vector>
+#include <time.h>
 #include "Graph.h"
 #include "AuxGraphEdge.h"
 #include "Hash.h"
@@ -736,6 +737,11 @@ int* Graph::topologicalSort(std::ofstream &output) {
 
 // Greedy
 std::vector<AuxGraphEdge> Graph::greedy(std::ofstream &output) {
+
+    clock_t tInicio, tFim, tDecorrido;
+
+    tInicio = clock();
+
     std::vector<AuxGraphEdge> vetEdges = m_edges;
     std::sort(vetEdges.begin(), vetEdges.end());
 
@@ -790,6 +796,11 @@ std::vector<AuxGraphEdge> Graph::greedy(std::ofstream &output) {
             }
         }
     }
+
+    tFim = clock();
+
+    tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
+    std::cout << "time: " << tDecorrido << "\n";
 
     std::cout << "graph Greedy {\n";
     output << "graph Greedy {\n";
