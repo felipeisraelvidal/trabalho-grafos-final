@@ -6,6 +6,7 @@
 #include <list>
 #include <vector>
 #include <time.h>
+#include <unistd.h>
 #include "Graph.h"
 #include "AuxGraphEdge.h"
 #include "Hash.h"
@@ -736,7 +737,7 @@ int* Graph::topologicalSort(std::ofstream &output) {
 }
 
 // Greedy
-std::vector<AuxGraphEdge> Graph::greedy(std::ofstream &output) {
+void Graph::greedy(std::ofstream &output) {
 
     clock_t tInicio, tFim, tDecorrido;
 
@@ -802,7 +803,6 @@ std::vector<AuxGraphEdge> Graph::greedy(std::ofstream &output) {
     tFim = clock();
 
     tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
-    std::cout << "time: " << tDecorrido << "\n";
 
     output << "Time: " << tDecorrido << "ms\n";
 
@@ -812,16 +812,11 @@ std::vector<AuxGraphEdge> Graph::greedy(std::ofstream &output) {
 
     output << "\n";
 
-    std::cout << "graph Greedy {\n";
-    output << "graph Greedy {\n";
-    for (int i = 0; i < resultado.size(); i++) {
-        std::cout << "\t" << resultado.at(i).getSourceId() << " -- " << resultado.at(i).getDestinationId() << " [label=" << resultado.at(i).getWeight() << "]\n";
-        output << "\t" << resultado.at(i).getSourceId() << " -- " << resultado.at(i).getDestinationId() << " [label=" << resultado.at(i).getWeight() << "]\n";
-    }
-    std::cout << "}\n";
-    output << "}\n";
-
-    return resultado;
+    // output << "graph Greedy {\n";
+    // for (int i = 0; i < resultado.size(); i++) {
+    //     output << "\t" << resultado.at(i).getSourceId() << " -- " << resultado.at(i).getDestinationId() << " [label=" << resultado.at(i).getWeight() << "]\n";
+    // }
+    // output << "}\n";
 }
 
 std::vector<AuxGraphEdge> Graph::constroiLCR(std::vector<AuxGraphEdge> edges, float alpha) {
@@ -845,73 +840,9 @@ int Graph::randomEdge(std::vector<AuxGraphEdge> edges) {
     return index;
 }
 
-void Graph::randomizedGreedy(float *alphaValues, int tam, std::ofstream &output) {
+void Graph::randomizedGreedy(float *alphaValues, int tam, int repeat, std::ofstream &output) {
     for (int i = 0; i < tam; i++) {
         float alpha = alphaValues[i];
-
-        clock_t tInicio, tFim, tDecorrido;
-
-        tInicio = clock();
-
-        std::vector<AuxGraphEdge> vetEdges = m_edges;
-        std::sort(vetEdges.begin(), vetEdges.end());
-
-        std::vector<AuxGraphEdge> resultado;
-        float sumWeight = 0;
-
-        int *listGroups = (int *)malloc(sizeof(int) * m_numberOfGroups);
-
-        int *subgroups = (int *)malloc(sizeof(int) * m_numberOfGroups);
-        memset(subgroups, 0, sizeof(int) * m_numberOfGroups);
-
-        int *subtrees = (int *)malloc(sizeof(int) * m_order);
-        memset(subtrees, -1, sizeof(int) * m_order);
-        
-        int num = m_numberOfGroups;
-        std::vector<AuxGraphEdge> L;
-        while (num > 1) {
-            L = constroiLCR(vetEdges, alpha);
-
-            int index = randomEdge(L);
-            AuxGraphEdge edge = L.at(index);
-
-            // remover aresta do vetEdges
-            for (int i = 0; i < vetEdges.size(); i++) {
-                if (vetEdges.at(i).getSourceId() == edge.getSourceId() && vetEdges.at(i).getDestinationId() == edge.getDestinationId()) {
-                    vetEdges.erase(vetEdges.begin() + i);
-                }
-                if (vetEdges.at(i).getSourceId() == edge.getDestinationId() && vetEdges.at(i).getDestinationId() == edge.getSourceId()) {
-                    vetEdges.erase(vetEdges.begin() + i);
-                }
-            }
-
-            int u = findInSubtree(subtrees, edge.getSourceId());
-            int v = findInSubtree(subtrees, edge.getDestinationId());
-
-            if (u != v) {
-                GraphNode *nodeU = getNode(edge.getSourceId());
-                GraphNode *nodeV = getNode(edge.getDestinationId());
-                if (nodeU != nullptr && nodeV != nullptr) {
-                    int gu = nodeU->getGroupId();
-                    int gv = nodeV->getGroupId();
-
-                    if ((subgroups[gu - 1] == nodeU->getId() || subgroups[gu - 1] == 0) && (subgroups[gv - 1] == nodeV->getId() || subgroups[gv - 1] == 0)) {
-                        
-                        resultado.push_back(edge);
-                        sumWeight += edge.getWeight();
-                        joinSubtrees(subtrees, u, v);
-
-                        num--;
-                        if (subgroups[gu - 1] == 0) {
-                            subgroups[gu - 1] = nodeU->getId();
-                        }
-                        if (subgroups[gv - 1] == 0) {
-                            subgroups[gv - 1] = nodeV->getId();
-                        }
-                    }
-                }
-            }
-        }
 
         if (i != 0) {
             output << "\n";
@@ -921,23 +852,95 @@ void Graph::randomizedGreedy(float *alphaValues, int tam, std::ofstream &output)
 
         output << "\n";
 
-        tFim = clock();
-        tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
+        for (int j = 0; j < repeat; j++) {
 
-        output << "Time: " << tDecorrido << "ms\n";
+            sleep(1);
 
-        output << "Total Weight: " << sumWeight << "\n";
-        float averageWeight = sumWeight / float(resultado.size());
-        output << "Average Weight: " << averageWeight << "\n";
+            clock_t tInicio, tFim, tDecorrido;
 
-        output << "\n";
+            tInicio = clock();
 
-        output << "graph RandomizedGreedy {\n";
-        for (int i = 0; i < resultado.size(); i++) {
-            output << "\t" << resultado.at(i).getSourceId() << " -- " << resultado.at(i).getDestinationId() << " [label=" << resultado.at(i).getWeight() << "]\n";
+            std::vector<AuxGraphEdge> vetEdges = m_edges;
+            std::sort(vetEdges.begin(), vetEdges.end());
+
+            std::vector<AuxGraphEdge> resultado;
+            float sumWeight = 0;
+
+            int *listGroups = (int *)malloc(sizeof(int) * m_numberOfGroups);
+
+            int *subgroups = (int *)malloc(sizeof(int) * m_numberOfGroups);
+            memset(subgroups, 0, sizeof(int) * m_numberOfGroups);
+
+            int *subtrees = (int *)malloc(sizeof(int) * m_order);
+            memset(subtrees, -1, sizeof(int) * m_order);
+            
+            int num = m_numberOfGroups;
+            std::vector<AuxGraphEdge> L;
+            while (num > 1) {
+                L = constroiLCR(vetEdges, alpha);
+
+                int index = randomEdge(L);
+                AuxGraphEdge edge = L.at(index);
+
+                // remover aresta do vetEdges
+                for (int i = 0; i < vetEdges.size(); i++) {
+                    if (vetEdges.at(i).getSourceId() == edge.getSourceId() && vetEdges.at(i).getDestinationId() == edge.getDestinationId()) {
+                        vetEdges.erase(vetEdges.begin() + i);
+                    }
+                    if (vetEdges.at(i).getSourceId() == edge.getDestinationId() && vetEdges.at(i).getDestinationId() == edge.getSourceId()) {
+                        vetEdges.erase(vetEdges.begin() + i);
+                    }
+                }
+
+                int u = findInSubtree(subtrees, edge.getSourceId());
+                int v = findInSubtree(subtrees, edge.getDestinationId());
+
+                if (u != v) {
+                    GraphNode *nodeU = getNode(edge.getSourceId());
+                    GraphNode *nodeV = getNode(edge.getDestinationId());
+                    if (nodeU != nullptr && nodeV != nullptr) {
+                        int gu = nodeU->getGroupId();
+                        int gv = nodeV->getGroupId();
+
+                        if ((subgroups[gu - 1] == nodeU->getId() || subgroups[gu - 1] == 0) && (subgroups[gv - 1] == nodeV->getId() || subgroups[gv - 1] == 0)) {
+                            
+                            resultado.push_back(edge);
+                            sumWeight += edge.getWeight();
+                            joinSubtrees(subtrees, u, v);
+
+                            num--;
+                            if (subgroups[gu - 1] == 0) {
+                                subgroups[gu - 1] = nodeU->getId();
+                            }
+                            if (subgroups[gv - 1] == 0) {
+                                subgroups[gv - 1] = nodeV->getId();
+                            }
+                        }
+                    }
+                }
+            }
+
+            output << "-> Execution " << (j + 1) << "\n\n";
+
+            tFim = clock();
+            tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
+
+            output << "Time: " << tDecorrido << "ms\n";
+
+            output << "Total Weight: " << sumWeight << "\n";
+            float averageWeight = sumWeight / float(resultado.size());
+            output << "Average Weight: " << averageWeight << "\n";
+
+            output << "\n";
+
+            // output << "graph RandomizedGreedy {\n";
+            // for (int i = 0; i < resultado.size(); i++) {
+            //     output << "\t" << resultado.at(i).getSourceId() << " -- " << resultado.at(i).getDestinationId() << " [label=" << resultado.at(i).getWeight() << "]\n";
+            // }
+            // output << "}\n";
+
         }
-        output << "}\n";
-
+        
         output << "\n==============================\n";
     }
 }

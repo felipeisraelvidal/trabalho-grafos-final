@@ -107,8 +107,8 @@ public:
     int* topologicalSort(std::ofstream &output);
 
     // Greedy
-    std::vector<AuxGraphEdge> greedy(std::ofstream &output);
-    void randomizedGreedy(float *alphaValues, int tam, std::ofstream &output);
+    void greedy(std::ofstream &output);
+    void randomizedGreedy(float *alphaValues, int tam, int repeat, std::ofstream &output);
 
 };
 

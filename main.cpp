@@ -173,54 +173,41 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
         break;
     }
     case 8: {
-        std::cout << "Algoritmo Guloso\n";
-        int qtd;
-        std::cout << "Quantos testes você gostaria de realizar? ";
-        std::cin >> qtd;
-        if (qtd > 1) {
-            for (int i = 0; i < qtd; i++) {
-                // Generate test result file
-                std::string filename = "test/test_greedy_" + std::to_string(i) + ".txt";
-                std::ofstream output_file(filename);
-
-                if (output_file.is_open()) {
-                    graph->greedy(output_file);
-                } else {
-                    std::cout << "Unable to open the output file.\n";
-                }
-            }
+        std::string filename = "test/test_greedy.txt";
+        std::ofstream output_file(filename);
+        
+        if (output_file.is_open()) {
+            graph->greedy(output_file);
+            output_file.close();
         } else {
-            std::string filename = "test/test_greedy_" + std::to_string(0) + ".txt";
-            std::ofstream output_file(filename);
-            
-            if (output_file.is_open()) {
-                graph->greedy(output_file);
-                output_file.close();
-            } else {
-                std::cout << "Unable to open the output file.\n";
-            }
+            std::cout << "Unable to open the output file.\n";
         }
         break;
     }
     case 9: {
         std::cout << "Algoritmo Guloso Randomizado\n";
         
-        int qtd;
+        int qtdAlphaValues;
         std::cout << "Quantos testes você gostaria de realizar (valores de alpha)? ";
-        std::cin >> qtd;
-        std::cout << "qtd: " << qtd << "\n";
+        std::cin >> qtdAlphaValues;
+        std::cout << "qtd: " << qtdAlphaValues << "\n";
         std::cout << "Insira os valores de alpha:\n";
-        float *alphaValues = (float *)malloc(sizeof(float) * qtd);
-        for (int i = 0; i < qtd; i++) {
+        
+        float *alphaValues = (float *)malloc(sizeof(float) * qtdAlphaValues);
+        for (int i = 0; i < qtdAlphaValues; i++) {
             float value;
             std::cout << "value " << (i + 1) << ": ";
             std::cin >> alphaValues[i];
         }
 
+        int repeat;
+        std::cout << "Quantas vezes você gostaria de executar cada valor de alpha? ";
+        std::cin >> repeat;
+
         // Generate test result file
         std::string filename = "test/test_randomized_greedy.txt";
         std::ofstream output_file(filename);
-        graph->randomizedGreedy(alphaValues, qtd, output_file);
+        graph->randomizedGreedy(alphaValues, qtdAlphaValues, repeat, output_file);
 
         break;
     }
