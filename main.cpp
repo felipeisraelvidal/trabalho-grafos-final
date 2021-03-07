@@ -97,6 +97,7 @@ void startReadingOtherFileExtension(Graph *graph, std::string &input_file_name, 
         graph->insertEdge(nodeId, targetId, edgeWeight);
         counter++;
     }
+    std::cout << "\n";
 }
 
 void leitura(Graph *graph, std::string &input_file_name, std::ifstream &input_file) {
@@ -189,7 +190,7 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
                 }
             }
         } else {
-            std::string filename = "test/test__greedy_" + std::to_string(0) + ".txt";
+            std::string filename = "test/test_greedy_" + std::to_string(0) + ".txt";
             std::ofstream output_file(filename);
             
             if (output_file.is_open()) {
@@ -203,32 +204,24 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
     }
     case 9: {
         std::cout << "Algoritmo Guloso Randomizado\n";
+        
         int qtd;
-        std::cout << "Quantos testes você gostaria de realizar? ";
+        std::cout << "Quantos testes você gostaria de realizar (valores de alpha)? ";
         std::cin >> qtd;
-        if (qtd > 1) {
-            for (int i = 0; i < qtd; i++) {
-                // Generate test result file
-                std::string filename = "test/test_randomized_greedy_" + std::to_string(i) + ".txt";
-                std::ofstream output_file(filename);
-                
-                if (output_file.is_open()) {
-                    graph->randomizedGreedy(output_file);
-                } else {
-                    std::cout << "Unable to open the output file.\n";
-                }
-            }
-        } else if (qtd == 1) {
-            std::string filename = "test/test_randomized_greedy_" + std::to_string(0) + ".txt";
-            std::ofstream output_file(filename);
-            
-            if (output_file.is_open()) {
-                graph->randomizedGreedy(output_file);
-                output_file.close();
-            } else {
-                std::cout << "Unable to open the output file.\n";
-            }
+        std::cout << "qtd: " << qtd << "\n";
+        std::cout << "Insira os valores de alpha:\n";
+        float *alphaValues = (float *)malloc(sizeof(float) * qtd);
+        for (int i = 0; i < qtd; i++) {
+            float value;
+            std::cout << "value " << (i + 1) << ": ";
+            std::cin >> alphaValues[i];
         }
+
+        // Generate test result file
+        std::string filename = "test/test_randomized_greedy.txt";
+        std::ofstream output_file(filename);
+        graph->randomizedGreedy(alphaValues, qtd, output_file);
+
         break;
     }
     case 10: {
@@ -308,8 +301,8 @@ int main(int argc, char const *argv[]) {
     std::ifstream input_file;
     std::ofstream output_file;
     input_file.open(argv[1], std::ios::in);
-    output_file.open(argv[2], std::ios::out - std::ios::trunc);
-    
+    output_file.open(argv[2]);
+
     int isDirected = atoi(argv[3]);
     int isWeightedEdge = atoi(argv[4]);
     int isWeightedNode = atoi(argv[5]);

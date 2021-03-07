@@ -108,7 +108,7 @@ public:
 
     // Greedy
     std::vector<AuxGraphEdge> greedy(std::ofstream &output);
-    std::vector<AuxGraphEdge> randomizedGreedy(std::ofstream &output);
+    void randomizedGreedy(float *alphaValues, int tam, std::ofstream &output);
 
 };
 
