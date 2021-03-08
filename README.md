@@ -39,19 +39,19 @@ Os argumentos que precisam ser passados são:
 
 Quando o programa for executado, aparecerá um menu para a seleção das funções implementadas, como mostra abaixo:
 
->MENU
->-------------------------------------------------
->
->[1] Subgrafo induzido por conjunto de vértices
->[2] Caminho Mínimo entre dois vértices - Dijkstra
->[3] Caminho Mínimo entre dois vértices - Floyd
->[4] Árvore Geradora Mínima de Kruskal
->[5] Árvore Geradora Mínima de Prim
->[6] Imprimir caminhamento em largura
->[7] Imprimir ordenacao topológica
->[8] Algoritmo Guloso
->[9] Algoritmo Guloso Randomizado
->[0] Sair
+> MENU
+> -------------------------------------------------
+> 
+> [1] Subgrafo induzido por conjunto de vértices<br/>
+> [2] Caminho Mínimo entre dois vértices - Dijkstra<br/>
+> [3] Caminho Mínimo entre dois vértices - Floyd<br/>
+> [4] Árvore Geradora Mínima de Kruskal<br/>
+> [5] Árvore Geradora Mínima de Prim<br/>
+> [6] Imprimir caminhamento em largura<br/>
+> [7] Imprimir ordenacao topológica<br/>
+> [8] Algoritmo Guloso<br/>
+> [9] Algoritmo Guloso Randomizado<br/>
+> [0] Sair<br/>
 
 Após executar as funções desejadas, é preciso sair do do programa (comando 0) para salvar os resultados no arquivo de saída passado via parâmetro.
 
