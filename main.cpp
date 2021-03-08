@@ -128,7 +128,6 @@ int menu() {
     std::cout << "[7] Imprimir ordenacao topológica\n";
     std::cout << "[8] Algoritmo Guloso\n";
     std::cout << "[9] Algoritmo Guloso Randomizado\n";
-    std::cout << "[10] Algoritmo Guloso Randomizado Reativo\n";
     std::cout << "[0] Sair\n";
 
     std::cin >> selection;
@@ -211,10 +210,6 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
 
         break;
     }
-    case 10: {
-        std::cout << "Algoritmo Guloso Randomizado Reativo\n";
-        break;
-    }
     default:
         break;
     }
@@ -223,7 +218,7 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
 void mainMenu(Graph *graph, std::ofstream &output_file) {
     int selection = 1;
     while (selection != 0) {
-        // system("clear");
+        system("clear");
         selection = menu();
 
         if (output_file.is_open()) {
@@ -237,34 +232,6 @@ void mainMenu(Graph *graph, std::ofstream &output_file) {
 }
 
 int main(int argc, char const *argv[]) {
-
-    // Graph graph(false, false, false);
-    // graph.insertEdge(1, 2, 0);
-    // graph.insertEdge(1, 4, 0);
-    // graph.insertEdge(2, 3, 0);
-
-    // graph.print();
-
-    // std::cout << "Number of nodes: " << graph.getOrder() << "\n";
-    // std::cout << "Number of edges: " << graph.numberOfEdges() << "\n";
-
-    // int target = 1;
-    // std::cout << "Node " << target << ":\n";
-    // std::cout << "Degree: " << graph.getNode(target)->getDegree() << "\n";
-    // std::cout << "In degree: " << graph.getNode(target)->getInDegree() << "\n";
-    // std::cout << "Out degree: " << graph.getNode(target)->getOutDegree() << "\n";
-
-    // Hash hash(5);
-    // hash.insert(10, 5);
-    // hash.insert(24, 4);
-    // hash.insert(1, 25);
-    // hash.insert(36, 2);
-    // hash.insert(42, 30);
-
-    // hash.print();
-
-    // int result = hash.get(42);
-    // std::cout << result << "\n";
 
     std::ofstream file("file.txt");
     file << "Teste!";
@@ -299,7 +266,7 @@ int main(int argc, char const *argv[]) {
     if (input_file.is_open()) {
         leitura(&graph, input_file_name, input_file);
         
-        graph.print();
+        // graph.print();
         std::cout << "Order: " << graph.getOrder() << "\n";
 
         mainMenu(&graph, output_file);

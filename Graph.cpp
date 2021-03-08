@@ -882,6 +882,9 @@ void Graph::randomizedGreedy(float *alphaValues, int tam, int repeat, std::ofstr
                 int index = randomEdge(L);
                 AuxGraphEdge edge = L.at(index);
 
+                // std::cout << "Checking edge: " << edge.getSourceId() << " - " << edge.getDestinationId() << " (" << edge.getWeight() << ")";
+                // fflush(stdout);
+
                 // remover aresta do vetEdges
                 for (int i = 0; i < vetEdges.size(); i++) {
                     if (vetEdges.at(i).getSourceId() == edge.getSourceId() && vetEdges.at(i).getDestinationId() == edge.getDestinationId()) {
