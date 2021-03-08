@@ -1,6 +1,6 @@
 /.vscode
 /instances
-/test/**
+/tests/**
 
 .DS_STORE
 

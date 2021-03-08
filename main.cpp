@@ -4,6 +4,8 @@
 #include <regex>
 #include <string>
 #include <vector>
+#include <sys/stat.h> 
+#include <sys/types.h> 
 #include "Graph.h"
 #include "Hash.h"
 
@@ -250,6 +252,9 @@ int main(int argc, char const *argv[]) {
         std::string instance = input_file_name.substr(input_file_name.find("v"));
         std::cout << "Running" << program_name << " with instance" << instance << "...\n";
     }
+
+    // Generate the 'tests' folder...
+    mkdir("tests", 0777);
 
     //Abrindo arquivo de entrada
     std::ifstream input_file;
