@@ -547,6 +547,58 @@ void Graph::dijkstra(std::ofstream &output) {
     }
 }
 
+// Floyd
+int** Graph::generateFloydMatrix() {
+    int n = m_order;
+    int** distancias = (int **) malloc(sizeof(int *) * n);
+    for(int i=0; i < n; i++){
+        distancias[i] = (int *) malloc(sizeof(int) * n);
+    }
+
+    for(int i = 0; i<n; i++) {
+        for(int j = 0; j<n; j++) {
+            distancias[i][j] = 0;
+        }
+    }
+
+    for(int i = 0; i<n; i++) {
+        for(int j = 0; j<n; j++) {
+            GraphEdge *edge = getEdgeBetween(i + 1, j + 1);
+            if (edge != nullptr) {
+                std::cout << edge->getId() << " - " << edge->getTargetId() << " (" << edge->getWeight() << ")" << "\n";;
+                distancias[i][j] = edge->getWeight();
+            }
+        }
+    }
+
+    for(int aux = 0; aux < n; aux++) {
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j<n; j++) {
+                if ((distancias[i][aux] * distancias[aux][j] != 0) && (i != j)){
+                    if ((distancias[i][aux] + distancias[aux][j] < distancias[i][j]) || (distancias[i][j] == 0)){
+                        distancias[i][j] = distancias[i][aux] + distancias[aux][j];
+                    }
+                }
+            }
+        }
+    }
+
+    return distancias;
+}
+
+void Graph::floyd(std::ofstream &output) {
+    int src, dest;
+    std::cout << "Source: ";
+    std::cin >> src;
+    std::cout << "Destination: ";
+    std::cin >> dest;
+
+    int** dist = generateFloydMatrix();
+
+    output << "Floyd\n";
+    output << "Dist between " << src << " and " << dest << ": " << dist[src - 1][dest - 1] << "\n";
+}
+
 // Kruskal
 int Graph::findInSubtree(int subtree[], int i) {
     if (subtree[i] == -1) {

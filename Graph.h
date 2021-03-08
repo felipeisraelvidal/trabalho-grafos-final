@@ -29,6 +29,9 @@ private:
     int minDistance(Hash<int> *dist, Hash<bool> *visited);
     void auxDijkstra(Hash<float> *dist, Hash<bool> *visited, Hash<int> *previous, Hash<float> *previousWeight, int atual);
 
+    // Floyd
+    int** generateFloydMatrix();
+
     // Kruskal
     int findInSubtree(int subtree[], int i); // searches the subtrees for element i
     void joinSubtrees(int *subtree, int u, int v);
@@ -96,6 +99,9 @@ public:
 
     // Dijkstra
     void dijkstra(std::ofstream &output);
+
+    // Floyd
+    void floyd(std::ofstream &output);
 
     // Kruskal
     void kruskal(std::ofstream &output);

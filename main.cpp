@@ -149,7 +149,7 @@ void selectOption(Graph *graph, int selection, std::ofstream &output_file) {
     }
     case 3: {
         std::cout << "Caminho Mínimo entre dois vértices - Floyd\n";
-        // graph->floyd();
+        graph->floyd(output_file);
         break;
     }
     case 4: {
